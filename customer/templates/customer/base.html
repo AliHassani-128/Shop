@@ -1,0 +1,30 @@
+{% load crispy_forms_filters %}
+{% load static %}
+{% load rest_framework %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    {% block title %}
+        <title>Home</title>
+    {% endblock %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+
+</head>
+<body>
+
+
+{% block content %}
+    <h1>Home page</h1>
+    {% if user.is_authenticated %}
+        <button class="btn btn-danger"><a href="{% url 'logout_customer' %}" class="text-white">Logout</a></button>
+    {% else %}
+        <button class="btn btn-info"><a href="{% url 'register_customer' %}" class="text-white">Register</a></button>
+        <button class="btn btn-success"><a href="{% url 'login_customer' %}" class="text-white">Login</a></button>
+    {% endif %}
+{% endblock %}
+
+
+</body>
+</html>

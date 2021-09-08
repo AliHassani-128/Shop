@@ -1,0 +1,23 @@
+{% extends 'management/base.html' %}
+{% load rest_framework %}
+
+{% block content %}
+
+    {% load crispy_forms_tags %}
+    <div class="row justify-content-center">
+        <div class="col-5">
+            {% if serializer %}
+                <form action="{% url 'register_customer' %}" method="POST">
+                    {% csrf_token %}
+                    {% render_form serializer %}
+                     <div class="row justify-content-center">
+                        <input type="submit" class="btn btn-info" value="Register">
+                    </div>
+                </form>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+{% endblock %}

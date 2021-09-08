@@ -1,0 +1,19 @@
+{% extends 'management/base.html' %}
+{% load rest_framework %}
+
+{% block content %}
+    <div class="row justify-content-center mb-5 mt-4">
+        <div class="col-4">
+            {% if serializer %}
+                <form action="{% url 'login_customer' %}" method="post" class="form form-group">
+                    {% csrf_token %}
+                    {% render_form serializer %}
+                    <div class="row justify-content-center">
+                        <input type="submit" class="btn btn-success" value="Login">
+                    </div>
+                </form>
+            {% endif %}
+        </div>
+
+    </div>
+{% endblock %}
