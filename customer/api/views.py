@@ -40,7 +40,7 @@ class CustomerLogin(generics.CreateAPIView):
     model = Customer
     serializer_class = LoginSerializer
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'customer/login-customer.html'
+    template_name = 'customer/login.html'
 
     def get(self,request):
         serializer = LoginSerializer()

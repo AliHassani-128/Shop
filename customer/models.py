@@ -18,6 +18,3 @@ class Customer(User):
 class Address(models.Model):
     customer = models.ForeignKey(Customer,on_delete=models.CASCADE)
     address = models.TextField()
-
-
-
