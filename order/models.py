@@ -5,6 +5,20 @@ from customer.models import Customer
 from product.models import Product
 
 
+from django.core.validators import MinValueValidator, MaxValueValidator
+
+
+class DiscountCode(models.Model):
+    code = models.CharField(max_length=50, unique=True)
+    valid_from = models.DateTimeField()
+    valid_to = models.DateTimeField()
+    discount = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
+    is_active = models.BooleanField()
+
+    def __str__(self):
+        return self.code
+
+
 class Order(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
@@ -15,12 +29,16 @@ class Order(models.Model):
     def product_price(self):
         return self.quantity * self.product.price
 
+    def __str__(self):
+        return f'{self.product.name} -- quantity : {self.quantity}'
+
 
 class OrderHistory(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.PROTECT)
-    products = models.ManyToManyField(Order)
+    orders = models.ManyToManyField(Order)
     ordered_date = models.DateTimeField(auto_now_add=True)
     ordered = models.BooleanField(default=False)
+    discount_code = models.ForeignKey(DiscountCode,on_delete=models.CASCADE,null=True,blank=True)
     READY_TO_SEND = 1
     SENDING = 2
     DELIVERED = 3
@@ -38,24 +56,11 @@ class OrderHistory(models.Model):
     def total_price(self):
         total = 0
         for order in self.products.all():
-            total += order.product_price
+            total += order.product.price
         return total
 
     @property
     def set_discount(self, discount):
-        return (self.total_price * discount) / 100
+        return self.total_price - (self.total_price * discount) / 100
 
 
-from django.core.validators import MinValueValidator, MaxValueValidator
-
-
-class DiscountCode(models.Model):
-    code = models.CharField(max_length=50, unique=True)
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    valid_from = models.DateTimeField()
-    valid_to = models.DateTimeField()
-    discount = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
-    is_active = models.BooleanField()
-
-    def __str__(self):
-        return self.code
