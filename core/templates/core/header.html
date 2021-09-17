@@ -1,0 +1,95 @@
+<nav class="navbar navbar-expand-md navbar-dark bg-dark mb-5" style="height: 100px">
+
+    <a class="navbar-brand" href="{% url 'core:index' %}">
+        <img src="{{ settings.BASE_DIR }}/media/myshop.png" height="80" alt="shop logo">
+    </a>
+
+
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#basicNav"
+            aria-controls="basicNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+
+
+    <div class="collapse navbar-collapse" id="basicNav">
+
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <button data-mdb-toggle="sidenav" data-mdb-target="#side_navbar" class="btn btn-outline-light"
+                        style="min-width: 14px;"
+                        aria-controls="#side_navbar" aria-haspopup="true" aria-expanded="true">
+                    <i class="fa fa-bars fa-lg"></i>
+
+                </button>
+
+
+            </li>
+
+            <li class="nav-item">
+                <a href="#!" class="nav-link navbar-link-2 waves-effect ml-auto mr-auto">
+
+                    <i class="fa fa-shopping-cart pl-0" style="font-size: 20px"></i>
+
+                </a>
+            </li>
+
+
+
+            {% if not user.is_authenticated %}
+                <li class="nav-item">
+                    <a href="{% url 'login_customer' %}" type="button"
+                       class="btn btn-outline-success btn-md btn-rounded btn-navbar waves-effect waves-light">
+                        Login
+                    </a>
+                </li>
+                <li class="nav-item pl-2 mb-2 mb-md-0">
+                    <a href="{% url 'register_customer' %}" type="button"
+                       class="btn btn-outline-info btn-md btn-rounded btn-navbar waves-effect waves-light">Sign
+                        up</a>
+                </li>
+            {% else %}
+                <li class="nav-item">
+                    <a href="{% url 'logout_customer' %}" type="button"
+                       class="btn btn-outline-danger btn-md btn-rounded btn-navbar waves-effect waves-light">
+                        Logout
+                    </a>
+                </li>
+                <li class="nav-item pl-2 mb-2 mb-md-0">
+                    <a href="{% url 'change_password' %}" type="button"
+                       class="btn btn-outline-info btn-md btn-rounded btn-navbar waves-effect waves-light">Password
+                        change</a>
+                </li>
+
+                <li class="nav-item pl-2 mb-2 mb-md-0">
+                    <button type="button" class="btn btn-outline-warning" data-toggle="modal"
+                            data-target="#myProfile">
+                        Profile
+                    </button>
+                    {% include 'customer/customer_profile.html' %}
+
+
+                </li>
+                <li class="nav-item">
+                <a href="{% url 'customer:show_address' %}" class="nav-link waves-effect ml-auto mr-auto">
+                    My Addresses
+                </a>
+            </li>
+                <li class="nav-item">
+                <a href="{% url 'customer:set_address' %}" class="nav-link waves-effect ml-auto mr-auto">
+                    New Address
+                </a>
+            </li>
+
+
+
+
+
+
+            {% endif %}
+        </ul>
+
+    </div>
+
+
+</nav>
