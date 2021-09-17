@@ -19,9 +19,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-uu7@dsn#t9eccu7n_)0@3_sfw2t+aqz1*a*#db56qtzmi53sww'
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -81,17 +78,6 @@ WSGI_APPLICATION = 'django_project.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'my_shop_test',
-        'USER': 'postgres',
-        'PASSWORD': '128128',
-        'HOST': '127.0.0.1',
-        'PORT': '5432'
-    }
-}
 
 
 # Password validation
