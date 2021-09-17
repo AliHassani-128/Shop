@@ -1,0 +1,111 @@
+{% extends 'core/base.html' %}
+{% load crispy_forms_filters %}
+
+
+{% block content %}
+    {% if form %}
+        <div class="row justify-content-center">
+            <div class="col-6">
+
+                <form action="{% url 'customer:edit_address' id %}" method="post">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <div class="row justify-content-center">
+                        <input type="submit" class="btn btn-success mb-5" value="Save">
+                    </div>
+
+                </form>
+            </div>
+
+
+        </div>
+
+    {% else %}
+        <form action="{% url 'customer:set_address' %}" method="post">
+            {% csrf_token %}
+            <div class="row justify-content-center">
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="country-select"></label><select onchange="initStates()"
+                                                                            id="country-select"
+                                                                            class="form-control"
+                                                                            name="country">
+                                <option>Country</option>
+                            </select></div>
+                            <div class="form-group">
+
+                                <label for="state-select"></label><select id="state-select" name="city"
+                                                                          class="form-control">
+                                <option>City</option>
+                            </select></div>
+
+                            <textarea name="location" id="location" placeholder="Location" class="form-control mb-3"
+                                      rows="5"></textarea>
+
+                            <div class="row justify-content-center">
+                                <div class="col-auto">
+                                    <input type="submit" value="Save" class="btn btn-success">
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+        </form>
+
+    {% endif %}
+
+
+
+
+
+    <script>
+        //Populate countries select on page load
+        $(document).ready(function () {
+            //Call restful countries country endpoint
+            $.get('https://restcountries.eu/rest/v2/all', function (countries) {
+                for (let country of countries) {
+
+                    $('#country-select')
+                        .append($("<option></option>")
+                            .attr("value", country.name)
+                            .text(country.name));
+                }
+
+            });
+        });
+
+        //Function to fetch states
+        function initStates() {
+            //Get selected country name
+            let country = $("#country-select").val();
+
+            //Remove previous loaded states
+            $('#state-select option:gt(0)').remove();
+
+            //Call restful countries states endpoint
+            $.ajax({
+                url: 'https://countriesnow.space/api/v0.1/countries/population/cities/filter',
+                type: 'POST',
+                data: {"order": "asc", "orderBy": "name", "country": country},
+                success: function (res) {
+                    for (let data of res.data) {
+                        $('#state-select')
+                            .append($("<option></option>")
+                                .attr("value", data.city)
+                                .text(data.city));
+
+                    }
+                }
+            })
+        }
+    </script>
+
+
+{% endblock %}

@@ -1,16 +1,19 @@
-{% extends 'customer/base.html' %}
+{% extends 'core/base.html' %}
 {% load rest_framework %}
+{% load static %}
 
 {% block content %}
 
     {% load crispy_forms_tags %}
     <div class="row justify-content-center">
-        <div class="col-5">
+
+
+        <div class="col-4">
             {% if serializer %}
-                <form action="{% url 'register_customer' %}" method="POST">
+                <form action="{% url 'register_customer' %}" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     {% render_form serializer %}
-                     <div class="row justify-content-center">
+                    <div class="row justify-content-center mb-4">
                         <input type="submit" class="btn btn-info" value="Register">
                     </div>
                 </form>

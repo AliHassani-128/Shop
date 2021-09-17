@@ -1,0 +1,29 @@
+{% extends 'core/base.html' %}
+{% load crispy_forms_filters %}
+
+
+
+{% block content %}
+
+    {% load crispy_forms_tags %}
+    <div class="row justify-content-center">
+
+
+        <div class="col-4">
+            {% if form %}
+                <form action="{% url 'customer:update_profile' user.id %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <div class="row justify-content-center mb-4">
+                        <button type="button" class="btn btn-danger mr-3"><a href="{% url 'core:index' %}" class="text-white">Back</a></button>
+                        <input type="submit" class="btn btn-success ml-3" value="Save">
+
+                    </div>
+                </form>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+{% endblock %}
