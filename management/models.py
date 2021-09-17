@@ -1,13 +1,55 @@
-from django.contrib.auth.models import User
+from django.contrib.auth.base_user import BaseUserManager
+from django.contrib.auth.models import User, AbstractUser
 from django.db import models
 
 # Create your models here.
 
+class CustomUserManager(BaseUserManager):
+    """
+    Custom user model manager where email is the unique identifiers
+    for authentication instead of usernames.
+    """
+    def create_user(self, phone, password, **extra_fields):
+        """
+        Create and save a User with the given email and password.
+        """
+        if not phone:
+            raise ValueError('The Phone number must be set')
+        user = self.model(phone=phone, **extra_fields)
+        user.set_password(password)
+        user.save()
+        return user
 
-class Manager(User):
-    phone = models.IntegerField('Phone number', unique=True)
-    image = models.FileField(upload_to='manager_image', blank=True, null=True)
+    def create_superuser(self, phone, password, **extra_fields):
+        """
+        Create and save a SuperUser with the given email and password.
+        """
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('is_active', True)
+
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('Superuser must have is_staff=True.')
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('Superuser must have is_superuser=True.')
+        return self.create_user(phone, password, **extra_fields)
+
+
+class CustomUser(AbstractUser):
+    phone = models.CharField('Phone number', max_length=20,unique=True)
+    image = models.FileField(upload_to='user_images')
     password_again = models.CharField(max_length=128)
+
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = ['phone','email']
+
+    objects = CustomUserManager()
+
+    def __str__(self):
+        return self.username
+
+class Manager(CustomUser):
+
     is_staff = True
     is_superuser = True
 
@@ -18,18 +60,13 @@ class Manager(User):
         return f'{self.first_name} {self.last_name}'
 
 
-class Staff(User):
-    phone = models.IntegerField('Phone number', unique=True)
-    image = models.FileField(upload_to='staff_image', blank=True, null=True)
-    password_again = models.CharField(max_length=128)
+class Staff(CustomUser):
     is_staff = True
     is_superuser = False
 
     class Meta:
         verbose_name = 'Staff'
 
-    def __str__(self):
-        return f'{self.first_name} {self.last_name}'
 
 
 
