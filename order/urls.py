@@ -1,0 +1,13 @@
+from django.urls import path
+
+from order.views import add_to_cart_home_page, order_list, add_to_cart, delete_from_cart, final_order, final_pay
+
+app_name = 'order'
+urlpatterns = [
+    path('add-to-cart-home-page/',add_to_cart_home_page,name='add_to_cart_home_page'),
+    path('order-list/',order_list,name='order_list'),
+    path('add-to-cart/',add_to_cart,name='add_to_cart'),
+    path('delete-from-cart/',delete_from_cart,name='delete_from_cart'),
+    path('final-order/',final_order,name='final_order'),
+    path('final-pay/<int:id>',final_pay,name='final_pay'),
+]
