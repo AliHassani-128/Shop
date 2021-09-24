@@ -1,0 +1,43 @@
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div id="myCarousel" class="carousel slide" data-ride="carousel">
+            <ol class="carousel-indicators">
+                <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+                <li data-target="#myCarousel" data-slide-to="1"></li>
+                <li data-target="#myCarousel" data-slide-to="2"></li>
+            </ol>
+
+            <div class="carousel-inner" role="listbox">
+                {% for product in last_products %}
+
+
+                    <div class="carousel-item{% if forloop.first %} active{% endif %}">
+
+                    <img src="{{ settings.BASE_DIR }}/media/{{ product.image }}"
+                         {% if image.name %}alt="{{ image.name }}"{% endif %} style="width: 100%">
+
+
+                    <div class="carousel-caption text-center text-light">
+                        {% if product.name %}<h4>{{ product.name }}</h4>{% endif %}
+                        {% if product.real_price %}<p>{{ product.real_price }}</p>{% endif %}
+                    </div>
+                {% endfor %}
+
+
+                </div>
+
+
+
+                <a class="carousel-control-prev" href="#myCarousel" role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#myCarousel" role="button" data-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>

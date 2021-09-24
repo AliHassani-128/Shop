@@ -1,0 +1,93 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+
+{% block slideshow %}
+    {% if last_products %}
+        {% include 'product/last_products.html' %}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid mt-5">
+
+        <div class="row justify-content-center mt-5">
+            {% for product in products %}
+
+                <div class="col-sm-12 col-md-6 col-lg-3 ml-1 mr-1 mt-4">
+
+                    <div class="card shadow" style="border-radius: 20px">
+
+                        <div class="col-auto">
+                            <a href="#!">
+                                <div class="embed-responsive embed-responsive-4by3">
+                                    <img class="img-fluid card-img-top embed-responsive-item"
+                                         src="{{ settings.BASE_DIR }}/media/{{ product.image }}"
+                                         style="object-fit: contain">
+                                    <div class="mask rgba-black-slight"></div>
+                                </div>
+                            </a>
+                        </div>
+
+                        <div class="card-body text-center">
+
+                            <h5>{{ product.name }}</h5>
+                            <p class="small text-muted text-uppercase mb-2">{{ product.category }}</p>
+
+                            <hr>
+                            {% if product.discount %}
+
+                                <h6 class="mb-3">
+                                    <small class="text-grey">Real Price :<s
+                                            style="font-size: 15px">${{ product.real_price }}</s></small><br>
+                                    <span class="text-danger mr-1"
+                                          style="font-size: 20px"><b>${{ product.discount_price }}</b></span>
+
+                                </h6>
+
+                            {% else %}
+                                <p class="text-dark"><b>
+                                    Price :
+                                    ${{ product.real_price }}
+                                </b></p><br>
+                            {% endif %}
+
+
+                            {% if product.inventory > 0 %}
+                                <form action="{% url 'order:add_to_cart_home_page' %}" method="get">
+                                    <input name="product" type="text" style="display: none" value="{{ product.id }}">
+                                    <button type="submit" class="btn btn-info btn-sm mr-1 mb-2">
+                                        <i class="fa fa-shopping-cart pr-2"></i>Add to cart
+                                    </button>
+                                </form>
+
+                            {% else %}
+                                <button type="button" class="btn btn-secondary btn-sm mr-1 mb-2">
+                                    Finished
+                                </button>
+
+                            {% endif %}
+
+                            <a href="{% url 'product:detail_product' product.id %}"
+                               class="text-dark btn btn-light btn-sm mr-1 mb-2"><i class="fa fa-info-circle pr-2"></i>
+                                Details</a>
+
+
+                        </div>
+
+                    </div>
+
+                </div>
+            {% endfor %}
+
+
+        </div>
+    </div>
+
+    {% include 'product/pagination_products.html' %}
+
+
+{% endblock %}
+{% block js %}
+    <script src="{% static 'js/add_to_cart.js' %}"></script>
+{% endblock %}
