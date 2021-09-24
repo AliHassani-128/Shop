@@ -37,7 +37,7 @@ class CustomUserManager(BaseUserManager):
 
 class CustomUser(AbstractUser):
     phone = models.CharField('Phone number', max_length=20,unique=True)
-    image = models.FileField(upload_to='user_images')
+    image = models.FileField(upload_to='user_images',null=True,blank=True)
     password_again = models.CharField(max_length=128)
 
     USERNAME_FIELD = 'username'
@@ -50,22 +50,30 @@ class CustomUser(AbstractUser):
 
 class Manager(CustomUser):
 
-    is_staff = True
-    is_superuser = True
-
     class Meta:
         verbose_name = 'Manager'
+    def save(self, *args, **kwargs):
+        self.is_superuser = True
+        self.is_staff = True
+        self.is_active = True
+        super(Manager,self).save(*args,**kwargs)
+
 
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
 
 
 class Staff(CustomUser):
-    is_staff = True
-    is_superuser = False
 
     class Meta:
         verbose_name = 'Staff'
+
+    def save(self, *args, **kwargs):
+        self.is_superuser = False
+        self.is_staff = True
+        self.is_active = True
+        super(Staff,self).save(*args,**kwargs)
+
 
 
 
