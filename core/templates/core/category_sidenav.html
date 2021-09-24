@@ -1,0 +1,50 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/side_nav_category.css' %}">
+<nav class="navbar navbar-dark fixed-top bg-dark" id="">
+
+    <div class="collapse navbar-collapse bg-dark right" style="display:none" id="mySidebar">
+
+        <ul class="navbar-nav">
+            {% for category in categories %}
+                {% if not category.parent %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-white" href="{% url 'product:show_products' category.id %}" > {{ category.name }} </a>
+                        {% if category.children %}
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                {% for child in category.children.all %}
+                                    <li class="dropdown-submenu"><a class="text-white dropdown-item dropdown-toggle"
+                                                                    href="{% url 'product:show_products' child.id %}">{{ child.name }}</a>
+                                        {% if child.children %}
+                                            <ul class="dropdown-menu">
+                                                {% for child2 in child.children.all %}
+                                                    <li><a class="dropdown-item text-white" href="{% url 'product:show_products' child2.id %}">{{ child2.name }}</a></li>
+
+                                                {% endfor %}
+                                            </ul>
+                                        {% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </li>
+
+
+
+                {% endif %}
+
+
+            {% endfor %}
+        </ul>
+
+        <form class="form-inline mt-2 mt-md-0">
+            <input class="form-control mr-sm-2" type="text" placeholder="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form>
+
+        <div class="row justify-content-end">
+            <button class="btn btn-danger" onclick="$('#mySidebar').css('display', 'none')">Close</button>
+        </div>
+
+
+    </div>
+</nav>
