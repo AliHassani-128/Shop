@@ -1,4 +1,5 @@
 {% extends 'core/base.html' %}
+{% load static %}
 {% load crispy_forms_filters %}
 
 
@@ -62,50 +63,7 @@
     {% endif %}
 
 
-
-
-
-    <script>
-        //Populate countries select on page load
-        $(document).ready(function () {
-            //Call restful countries country endpoint
-            $.get('https://restcountries.eu/rest/v2/all', function (countries) {
-                for (let country of countries) {
-
-                    $('#country-select')
-                        .append($("<option></option>")
-                            .attr("value", country.name)
-                            .text(country.name));
-                }
-
-            });
-        });
-
-        //Function to fetch states
-        function initStates() {
-            //Get selected country name
-            let country = $("#country-select").val();
-
-            //Remove previous loaded states
-            $('#state-select option:gt(0)').remove();
-
-            //Call restful countries states endpoint
-            $.ajax({
-                url: 'https://countriesnow.space/api/v0.1/countries/population/cities/filter',
-                type: 'POST',
-                data: {"order": "asc", "orderBy": "name", "country": country},
-                success: function (res) {
-                    for (let data of res.data) {
-                        $('#state-select')
-                            .append($("<option></option>")
-                                .attr("value", data.city)
-                                .text(data.city));
-
-                    }
-                }
-            })
-        }
-    </script>
-
-
+{% endblock %}
+{% block js %}
+    <script src="{% static 'js/get_country_city.js' %}"></script>
 {% endblock %}

@@ -149,12 +149,6 @@ class PasswordResetConfirmView(GenericAPIView):
     permission_classes = (AllowAny,)
 
 
-
-    # def get(self,request,*args,**kwargs):
-    #     serializer = self.get_serializer()
-    #
-    #     return Response({'serializer':serializer})
-
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)

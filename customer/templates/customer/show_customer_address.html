@@ -1,22 +1,7 @@
 {% extends 'core/base.html' %}
+{% load static %}
 {% block style %}
-
-
-<style>
-table {
-  border-collapse: collapse;
-  width: 100%;
-}
-
-th, td {
-  padding: 8px;
-  text-align: left;
-  border-bottom: 1px solid #DDD;
-}
-
-tr:hover {background-color: #cbeeee;}
-</style>
-
+    <link rel="stylesheet" href="{% static 'css/table.css' %}">
 {% endblock %}
 {% block content %}
     {% if addresses %}
