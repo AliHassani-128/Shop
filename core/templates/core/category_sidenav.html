@@ -1,45 +1,109 @@
 {% load static %}
 <link rel="stylesheet" href="{% static 'css/side_nav_category.css' %}">
+<style>
+    .navbar-nav li:hover > ul.dropdown-menu {
+        display: block;
+    }
+
+    .dropdown-submenu {
+        position: relative;
+    }
+
+    .dropdown-submenu > .dropdown-menu {
+        top: 0;
+        left: 100%;
+        margin-top: -6px;
+    }
+
+    /* rotate caret on hover */
+    .dropdown-menu > li > a:hover:after {
+        text-decoration: underline;
+        transform: rotate(-90deg);
+    }
+
+</style>
+
 <nav class="navbar navbar-dark fixed-top bg-dark" id="">
 
     <div class="collapse navbar-collapse bg-dark right" style="display:none" id="mySidebar">
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark">
 
-        <ul class="navbar-nav">
-            {% for category in categories %}
-                {% if not category.parent %}
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-white" href="{% url 'product:show_products' category.id %}" > {{ category.name }} </a>
-                        {% if category.children %}
-                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                {% for child in category.children.all %}
-                                    <li class="dropdown-submenu"><a class="text-white dropdown-item dropdown-toggle"
-                                                                    href="{% url 'product:show_products' child.id %}">{{ child.name }}</a>
-                                        {% if child.children %}
-                                            <ul class="dropdown-menu">
-                                                {% for child2 in child.children.all %}
-                                                    <li><a class="dropdown-item text-white" href="{% url 'product:show_products' child2.id %}">{{ child2.name }}</a></li>
+            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                <ul class="navbar-nav">
+                    {% for category in categories %}
+                        {% if not category.parent %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-white"
+                                   href="{% url 'product:show_products' category.id %}"> {{ category.name }} </a>
+                                {% if category.children %}
 
-                                                {% endfor %}
-                                            </ul>
-                                        {% endif %}
-                                    </li>
-                                {% endfor %}
-                            </ul>
+
+                                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                        {% for child in category.children.all %}
+                                            {% if child.children %}
+                                                <li class="dropdown-submenu"><a
+                                                        class="text-dark dropdown-item dropdown-toggle"
+                                                        href="{% url 'product:show_products' child.id %}">{{ child.name }}</a>
+                                                    {% if child.children %}
+                                                        <ul class="dropdown-menu">
+                                                            {% for child2 in child.children.all %}
+                                                                {% if child2.children %}
+                                                                    <li class="dropdown-submenu"><a
+                                                                            class="dropdown-item text-dark"
+                                                                            href="{% url 'product:show_products' child2.id %}">{{ child2.name }}</a>
+                                                                        {% if child2.children %}
+                                                                            {% for child3 in child2.children.all %}
+                                                                                <ul class="dropdown-menu">
+                                                                                    <li>
+                                                                                        <a class="dropdown-item text-dark"
+                                                                                           href="{% url 'product:show_products' child3.id %}">{{ child3.name }}</a>
+                                                                                    </li>
+
+                                                                                </ul>
+
+                                                                            {% endfor %}
+
+
+                                                                        {% endif %}
+
+                                                                    </li>
+                                                                {% else %}
+                                                                    <li>
+                                                                        <a
+                                                                                class="dropdown-item text-dark"
+                                                                                href="{% url 'product:show_products' child2.id %}">{{ child2.name }}</a>
+                                                                    </li>
+
+                                                                {% endif %}
+
+                                                            {% endfor %}
+                                                        </ul>
+                                                    {% endif %}
+                                                </li>
+
+                                            {% else %}
+                                                <li class="dropdown-item">
+                                                    <a class=" text-dark"
+                                                       href="{% url 'product:show_products' child.id %}">{{ child.name }}</a>
+                                                </li>
+
+
+                                            {% endif %}
+
+                                        {% endfor %}
+                                    </ul>
+
+                                    {% else %}
+                                {% endif %}
+                            </li>
                         {% endif %}
-                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </nav>
 
 
 
-                {% endif %}
-
-
-            {% endfor %}
-        </ul>
-
-        <form class="form-inline mt-2 mt-md-0">
-            <input class="form-control mr-sm-2" type="text" placeholder="Search">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-        </form>
 
         <div class="row justify-content-end">
             <button class="btn btn-danger" onclick="$('#mySidebar').css('display', 'none')">Close</button>
