@@ -1,56 +1,202 @@
+<style>
+
+    .profile-card {
+        background: #333e4a;
+        height: 100%;
+        width: 100%;
+        border-radius: 5px;
+        overflow: hidden;
+    }
+
+    .infos {
+        height: 70%;
+        padding: 30px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+        align-items: center;
+    }
+
+    .img-border {
+        background: linear-gradient(to bottom right, #698dcf, #ed8ae5);
+        width: 70px;
+        height: 70px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 20%;
+    }
+
+    .img-border img {
+        width: 120px;
+        height: 120px;
+        border-radius: 20%;
+
+    }
+
+    .name {
+        font-size: 1.4rem;
+        color: #fff;
+        margin-top: 50px;
+    }
+
+    .specialty {
+        font-size: 1.2rem;
+        color: #e07272;
+        font-weight: 400;
+    }
+
+    .social-media {
+        width: 100%;
+        text-align: center;
+        margin-top: 15px;
+    }
+
+    .social-media a {
+        color: #fff;
+        text-decoration: none;
+        margin: 0 8px;
+        transition: all 0.4s ease;
+    }
+
+    .social-media a:hover {
+        color: #e07272;
+    }
+
+    .contact-me-btn {
+        background: transparent;
+        border: 1px solid #e07272;
+        border-radius: 3px;
+        outline: none;
+        width: 130px;
+        height: 35px;
+        cursor: pointer;
+        color: #e07272;
+        margin-top: 20px;
+        transition: all 0.4s ease;
+    }
+
+    .contact-me-btn:hover {
+        color: #fff;
+        background: #e07272;
+    }
+
+</style>
+
+
 <div class="modal" id="myProfile">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-body">
-
-                <div class="row mb-3 d-flex justify-content-center">
-                    {% if user.image %}
-                        <img style="border-radius: 50%;max-height: 100px;max-width: 200px"
-                             src="{{ settings.BASE_DIR }}/media/{{ user.image }}"
-                             alt="default image">
-
-                    {% else %}
-
-                        <img style="border-radius: 50%;max-height: 100px;max-width: 200px"
-                             src="{{ settings.BASE_DIR }}/media/shop.png" height="80" alt="user image">
-                    {% endif %}
-                </div>
-
-                <div class="navbar alert-warning rounded mb-3">
-                    <h4 class="text-dark">Username : {{ user.username }}</h4>
-                </div>
-                {% if user.first_name %}
-                    <div class="navbar alert-warning rounded mb-3">
-                        <h4 class="text-dark">First Name : {{ user.first_name }}</h4>
-                    </div>
-                {% endif %}
-                {% if user.last_name %}
-                    <div class="navbar alert-warning rounded mb-3">
-                        <h4 class="text-dark">Last Name : {{ user.last_name }}</h4>
-                    </div>
-                {% endif %}
+                <div class="profile-card">
+                    <div class="infos">
+                        <div class="img-border">
+                            {% if user.image %}
+                                <img src="{{ settings.BASE_DIR }}/media/{{ user.image }}" alt="image profile">
+                            {% else %}
+                                <img src="{{ settings.BASE_DIR }}/media/shop.png" height="80" alt="">
+                            {% endif %}
 
 
-                <div class="navbar alert-warning rounded mb-3">
-                    <h4 class="text-dark">Email : {{ user.email }}</h4>
-                </div>
-                <div class="navbar alert-warning rounded mb-3">
-                    <h4 class="text-dark">Phone : {{ user.phone }}</h4>
-                </div>
+                        </div>
 
+                        <h2 class="name">Username : {{ user.username }}</h2>
+                        {% if user.first_name %}
+                            <h3 class="specialty">First Name : {{ user.first_name }}</h3>
+                        {% endif %}
 
-                <div class="d-flex justify-content-between">
+                        {% if user.last_name %}
+                            <h3 class="specialty">Last Name : {{ user.last_name }}</h3>
+                        {% endif %}
 
-                    <button class="btn btn-info" type="submit">
-                        <a class="text-white"
-                           href="{% url 'customer:update_profile' user.id %}">Edit profile</a>
+                        <h3 class="specialty">Email : {{ user.email }}</h3>
+                        <h3 class="specialty">Phone : {{ user.phone }}</h3>
+                        <div class="social-media">
+                            <a href="#">
+                                <i class="fa fa-facebook-f"></i>
+                            </a>
+                            <a href="#">
+                                <i class="fa fa-twitter"></i>
+                            </a>
+                            <a href="#">
+                                <i class="fa fa-github"></i>
+                            </a>
+                            <a href="#">
+                                <i class="fa fa-youtube"></i>
+                            </a>
+                        </div>
+                    <button class="contact-me-btn">
+                        <a class="text-white" href="{% url 'customer:update_profile' user.id %}">Edit Profile</a></button>
 
+                    <button class="contact-me-btn">
+                        <a href="{% url 'customer:show_address' %}" class="text-white text-center">
+                            My Addresses
+                        </a>
                     </button>
-                    <button type="button" class="btn btn-danger" data-dismiss="modal"
-                            aria-hidden="true">
-                        Close
+                    <button class="contact-me-btn">
+                        <a href="{% url 'customer:set_address' %}" class="text-white text-center">
+                            New Address
+                        </a>
                     </button>
+                    <button class="contact-me-btn">
+                        <a href="{% url 'order:all_last_orders' %}" class="text-white text-center">
+                            All last orders
+                        </a>
+                    </button>
+
+
+                    </div>
                 </div>
+
+
+                {#                <div class="row mb-3 d-flex justify-content-center">#}
+                {#                    {% if user.image %}#}
+                {#                        <img style="border-radius: 50%;max-height: 100px;max-width: 200px"#}
+                {#                             src="{{ settings.BASE_DIR }}/media/{{ user.image }}"#}
+                {#                             alt="default image">#}
+                {##}
+                {#                    {% else %}#}
+                {##}
+                {#                        <img style="border-radius: 50%;max-height: 100px;max-width: 200px"#}
+                {#                             src="{{ settings.BASE_DIR }}/media/shop.png" height="80" alt="user image">#}
+                {#                    {% endif %}#}
+                {#                </div>#}
+                {##}
+                {#                <div class="navbar alert-warning rounded mb-3">#}
+                {#                    <h4 class="text-dark">Username : {{ user.username }}</h4>#}
+                {#                </div>#}
+                {#                {% if user.first_name %}#}
+                {#                    <div class="navbar alert-warning rounded mb-3">#}
+                {#                        <h4 class="text-dark">First Name : {{ user.first_name }}</h4>#}
+                {#                    </div>#}
+                {#                {% endif %}#}
+                {#                {% if user.last_name %}#}
+                {#                    <div class="navbar alert-warning rounded mb-3">#}
+                {#                        <h4 class="text-dark">Last Name : {{ user.last_name }}</h4>#}
+                {#                    </div>#}
+                {#                {% endif %}#}
+                {##}
+                {##}
+                {#                <div class="navbar alert-warning rounded mb-3">#}
+                {#                    <h4 class="text-dark">Email : {{ user.email }}</h4>#}
+                {#                </div>#}
+                {#                <div class="navbar alert-warning rounded mb-3">#}
+                {#                    <h4 class="text-dark">Phone : {{ user.phone }}</h4>#}
+                {#                </div>#}
+                {##}
+                {##}
+                {#                <div class="d-flex justify-content-between">#}
+                {##}
+                {#                    <button class="btn btn-info" type="submit">#}
+                {#                        <a class="text-white"#}
+                {#                           href="{% url 'customer:update_profile' user.id %}">Edit profile</a>#}
+                {##}
+                {#                    </button>#}
+                {#                    <button type="button" class="btn btn-danger" data-dismiss="modal"#}
+                {#                            aria-hidden="true">#}
+                {#                        Close#}
+                {#                    </button>#}
+                {#                </div>#}
             </div>
 
         </div>

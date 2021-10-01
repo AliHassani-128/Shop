@@ -57,6 +57,8 @@ class CustomerLogin(generics.CreateAPIView):
     renderer_classes = [TemplateHTMLRenderer]
     template_name = 'customer/login.html'
 
+
+
     def get(self, request,*args,**kwargs):
         serializer = self.get_serializer()
         return Response({'serializer': serializer})

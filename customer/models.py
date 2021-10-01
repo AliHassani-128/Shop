@@ -1,14 +1,29 @@
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from management.models import CustomUser
+
+class DiscountCode(models.Model):
+    code = models.CharField(max_length=50, unique=True)
+    valid_from = models.DateTimeField()
+    valid_to = models.DateTimeField()
+    discount = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
+    is_active = models.BooleanField()
+
+    def __str__(self):
+        return self.code
 
 
 
 class Customer(CustomUser):
-    is_staff = False
-    is_superuser = False
+    def save(self, *args, **kwargs):
+        self.is_superuser = False
+        self.is_staff = False
+        self.is_active = True
+        super(Customer, self).save(*args, **kwargs)
 
     class Meta:
         verbose_name = 'Customer'
+
 
 
 
@@ -21,3 +36,8 @@ class Address(models.Model):
     class Meta:
         verbose_name = 'Address'
         verbose_name_plural = 'Addresses'
+
+    def __str__(self):
+        return f'{self.country} - {self.city} - {self.location}'
+
+
