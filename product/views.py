@@ -2,22 +2,19 @@ from django.shortcuts import render
 
 # Create your views here.
 from django.views import generic
-from django.views.generic import ListView
-
 from customer.models import Customer
 from order.models import Order
-from product.models import Product,Category
+from product.models import Product, Category
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
 
-def show_products(request,id=None):
-
+def show_products(request, id=None):
     page = request.GET.get('page', 1)
     if id:
         products_list = Product.objects.filter(category_id=id)
     else:
         products_list = Product.objects.all().order_by('-id')
-    paginator = Paginator(products_list,10)
+    paginator = Paginator(products_list, 5)
     categories = Category.objects.all()
     last_products = Product.objects.all().order_by('-id')[:3]
     cart = request.session.get('cart')
@@ -28,8 +25,8 @@ def show_products(request,id=None):
         except Customer.DoesNotExist:
             pass
         else:
-            if Order.objects.filter(customer=customer,ordered=False).exists():
-                for order in Order.objects.filter(customer=customer,ordered=False):
+            if Order.objects.filter(customer=customer, ordered=False).exists():
+                for order in Order.objects.filter(customer=customer, ordered=False):
                     cart[str(order.product.id)] = order.quantity
                 request.session['cart'] = cart
 
@@ -40,6 +37,8 @@ def show_products(request,id=None):
     except EmptyPage:
         products = paginator.page(paginator.num_pages)
     return render(request,'product/all_products.html',{'products':products,'categories':categories,'last_products':last_products})
+
+
 
 
 
