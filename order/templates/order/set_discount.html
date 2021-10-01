@@ -1,0 +1,20 @@
+
+{% load rest_framework %}
+
+    <div class="row justify-content-center mb-5 mt-4">
+        <div class="col-4">
+
+            {% if serializer %}
+                <form id="discount-form" action="{% url 'set_discount' %}" method="post" class="form form-group">
+                    {% csrf_token %}
+                    {% render_form serializer %}
+                    <div class="row justify-content-center">
+                        <input id="apply-discount" type="submit" class="btn btn-success" value="Apply">
+                    </div>
+                </form>
+            {% endif %}
+
+        </div>
+
+    </div>
+

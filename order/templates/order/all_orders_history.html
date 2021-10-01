@@ -1,0 +1,51 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block style %}
+    <link rel="stylesheet" href="{% static 'css/table.css' %}">
+{% endblock %}
+{% block content %}
+    {% if order_history %}
+        <div class="row justify-content-center">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col" class="text-center"> Products</th>
+                    <th scope="col" class="text-center"> Date of Order</th>
+                    <th scope="col" class="text-center"> Status</th>
+                    <th scope="col" class="text-center"> Address</th>
+                    <th scope="col" class="text-center"></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for orders in order_history %}
+                    <tr>
+                        <td class="text-center">
+                            <ul>
+                                {% for order in orders.orders.all %}
+                                    <li>
+                                        {{ order.product.name }}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+
+                        <td class="text-center">
+                            {{ orders.ordered_date }}
+                        </td>
+
+                        <td class="text-center">
+                            {{ orders.status }}
+                        </td>
+
+                        <td class="text-center">
+                            {{ orders.address.country }} ,{{ orders.address.city }}
+                        </td>
+
+                    </tr>
+                {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
+    {% endif %}
+{% endblock %}
