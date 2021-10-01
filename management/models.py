@@ -1,8 +1,20 @@
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import User, AbstractUser
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
 # Create your models here.
+
+
+class DiscountCode(models.Model):
+    code = models.CharField(max_length=50, unique=True)
+    valid_from = models.DateTimeField()
+    valid_to = models.DateTimeField()
+    discount = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
+    is_active = models.BooleanField()
+
+    def __str__(self):
+        return self.code
 
 class CustomUserManager(BaseUserManager):
     """
@@ -39,6 +51,7 @@ class CustomUser(AbstractUser):
     phone = models.CharField('Phone number', max_length=20,unique=True)
     image = models.FileField(upload_to='user_images',null=True,blank=True)
     password_again = models.CharField(max_length=128)
+    discount_code = models.ForeignKey(DiscountCode, on_delete=models.CASCADE, null=True, blank=True)
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['phone','email']
@@ -47,6 +60,7 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.username
+
 
 class Manager(CustomUser):
 

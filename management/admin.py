@@ -1,7 +1,9 @@
 from django.contrib import admin
 
 from .forms import UserAdminCreationForm, UserAdminChangeForm
-from .models import Manager, Staff
+from .models import Manager, Staff, DiscountCode
+
+admin.site.register(DiscountCode)
 
 
 
