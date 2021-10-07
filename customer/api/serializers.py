@@ -10,16 +10,18 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from django.utils.http import urlsafe_base64_decode as uid_decoder
 from customer.models import Customer
+from django.utils.translation import gettext_lazy as _
 
 
 class CusotmerSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True, required=True, validators=[validate_password] ,style={'input_type': 'password', 'placeholder': 'Password'})
-    password_again = serializers.CharField(write_only=True, required=True , validators=[validate_password] ,style={'input_type': 'password', 'placeholder': 'Password Again'})
-    email = serializers.CharField(write_only=True,required=True)
+    username = serializers.CharField(write_only=True, required=True,  style={ 'placeholder': 'Username'})
+    password = serializers.CharField(write_only=True, required=True, validators=[validate_password], style={'input_type': 'password', 'placeholder': 'Password'})
+    password_again = serializers.CharField(write_only=True, required=True,style={'input_type': 'password', 'placeholder': 'Password Again'})
+    email = serializers.CharField(write_only=True,required=True,style={'placeholder': 'Email'})
     class Meta:
         model = Customer
         depth = 1
-        fields = ['username','first_name','last_name','password','password_again','email','phone','image']
+        fields = [_('username'),_('first_name'),_('last_name'),_('password'),_('password_again'),_('email'),_('phone'),_('image')]
 
 
     def create(self, validated_data):
@@ -35,8 +37,16 @@ class CusotmerSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         if attrs['password'] != attrs['password_again']:
             raise serializers.ValidationError({"password": "Password fields didn't match."})
+        if not attrs['email']:
+            raise serializers.ValidationError({'emil':'Email field is required'})
+        if not attrs['phone']:
+            raise serializers.ValidationError({'phone':'Phone field is required'})
         return attrs
 
+    def validate_username(self, username):
+        if len(username) < 4 or len(username) > 15:
+            raise ValidationError('Username must be between 4 and 15 characters long')
+        return username
 
 
 
@@ -88,10 +98,10 @@ class PasswordResetSerializer(serializers.Serializer):
         # Create PasswordResetForm with the serializer
         self.reset_form = self.password_reset_form_class(data=self.initial_data)
         if not self.reset_form.is_valid():
-            raise serializers.ValidationError('Error')
+            raise serializers.ValidationError(_('Error'))
 
         if not Customer.objects.filter(email=value).exists():
-            raise serializers.ValidationError('Invalid e-mail address')
+            raise serializers.ValidationError(_('Invalid e-mail address'))
 
         return value
 

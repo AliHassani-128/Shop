@@ -125,78 +125,39 @@
                                 <i class="fa fa-youtube"></i>
                             </a>
                         </div>
-                    <button class="contact-me-btn">
-                        <a class="text-white" href="{% url 'customer:update_profile' user.id %}">Edit Profile</a></button>
+                        <div class="row justify-content-between">
+                            <div class="col-12">
 
-                    <button class="contact-me-btn">
-                        <a href="{% url 'customer:show_address' %}" class="text-white text-center">
-                            My Addresses
-                        </a>
-                    </button>
-                    <button class="contact-me-btn">
-                        <a href="{% url 'customer:set_address' %}" class="text-white text-center">
-                            New Address
-                        </a>
-                    </button>
-                    <button class="contact-me-btn">
-                        <a href="{% url 'order:all_last_orders' %}" class="text-white text-center">
-                            All last orders
-                        </a>
-                    </button>
+                                <button class="contact-me-btn">
+                                    <a class="text-white" href="{% url 'customer:update_profile' user.id %}">Edit
+                                        Profile</a></button>
+
+                                <button class="contact-me-btn">
+                                    <a href="{% url 'customer:show_address' %}" class="text-white text-center">
+                                        My Addresses
+                                    </a>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row justify-content-around">
+                            <div class="col-12 ">
+                                <button class="contact-me-btn">
+                                    <a href="{% url 'customer:set_address' %}" class="text-white text-center">
+                                        New Address
+                                    </a>
+                                </button>
+                                <button class="contact-me-btn">
+                                    <a href="{% url 'order:all_last_orders' %}" class="text-white text-center">
+                                        All last orders
+                                    </a>
+                                </button>
+                            </div>
+                        </div>
 
 
                     </div>
                 </div>
 
-
-                {#                <div class="row mb-3 d-flex justify-content-center">#}
-                {#                    {% if user.image %}#}
-                {#                        <img style="border-radius: 50%;max-height: 100px;max-width: 200px"#}
-                {#                             src="{{ settings.BASE_DIR }}/media/{{ user.image }}"#}
-                {#                             alt="default image">#}
-                {##}
-                {#                    {% else %}#}
-                {##}
-                {#                        <img style="border-radius: 50%;max-height: 100px;max-width: 200px"#}
-                {#                             src="{{ settings.BASE_DIR }}/media/shop.png" height="80" alt="user image">#}
-                {#                    {% endif %}#}
-                {#                </div>#}
-                {##}
-                {#                <div class="navbar alert-warning rounded mb-3">#}
-                {#                    <h4 class="text-dark">Username : {{ user.username }}</h4>#}
-                {#                </div>#}
-                {#                {% if user.first_name %}#}
-                {#                    <div class="navbar alert-warning rounded mb-3">#}
-                {#                        <h4 class="text-dark">First Name : {{ user.first_name }}</h4>#}
-                {#                    </div>#}
-                {#                {% endif %}#}
-                {#                {% if user.last_name %}#}
-                {#                    <div class="navbar alert-warning rounded mb-3">#}
-                {#                        <h4 class="text-dark">Last Name : {{ user.last_name }}</h4>#}
-                {#                    </div>#}
-                {#                {% endif %}#}
-                {##}
-                {##}
-                {#                <div class="navbar alert-warning rounded mb-3">#}
-                {#                    <h4 class="text-dark">Email : {{ user.email }}</h4>#}
-                {#                </div>#}
-                {#                <div class="navbar alert-warning rounded mb-3">#}
-                {#                    <h4 class="text-dark">Phone : {{ user.phone }}</h4>#}
-                {#                </div>#}
-                {##}
-                {##}
-                {#                <div class="d-flex justify-content-between">#}
-                {##}
-                {#                    <button class="btn btn-info" type="submit">#}
-                {#                        <a class="text-white"#}
-                {#                           href="{% url 'customer:update_profile' user.id %}">Edit profile</a>#}
-                {##}
-                {#                    </button>#}
-                {#                    <button type="button" class="btn btn-danger" data-dismiss="modal"#}
-                {#                            aria-hidden="true">#}
-                {#                        Close#}
-                {#                    </button>#}
-                {#                </div>#}
             </div>
 
         </div>

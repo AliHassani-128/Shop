@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.models import AnonymousUser
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 from rest_framework import generics, status
@@ -8,6 +9,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.utils.translation import gettext_lazy as _
 
 from customer.api.serializers import CusotmerSerializer, LoginSerializer, ChangePasswordSerializer, \
     PasswordResetSerializer, PasswordResetConfirmSerializer
@@ -39,7 +41,8 @@ class CustomerCreate(generics.CreateAPIView):
     def post(self, request):
         serializer = CusotmerSerializer(data=request.data)
         if not serializer.is_valid():
-            return Response({'serializer': serializer})
+            # return Response(serializer.data,status=status.HTTP_400_BAD_REQUEST)
+            return Response({'serializer': serializer, 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         else:
             serializer.save()
             return redirect('core:index')
@@ -72,14 +75,16 @@ class CustomerLogin(generics.CreateAPIView):
                 return HttpResponseRedirect(redirect_to=request.data['next'])
             return redirect('core:index')
         else:
-            return Response({'serializer':serializer,'errors':serializer.errors})
+            return Response({'serializer':serializer,'errors':serializer.errors},status=status.HTTP_400_BAD_REQUEST)
 
 
 class LogoutView(APIView):
     def get(self, request):
+        if isinstance(self.request.user,AnonymousUser):
+            return Response({'error':'just logged in user can log out'},status=status.HTTP_400_BAD_REQUEST)
+
         logout(request)
         return redirect('core:index')
-
 
 class ChangePasswordView(generics.RetrieveUpdateDestroyAPIView):
     model = Customer
@@ -98,16 +103,16 @@ class ChangePasswordView(generics.RetrieveUpdateDestroyAPIView):
 
         if serializer.is_valid():
             if not self.object.check_password(serializer.validated_data['old_password']):
-                return Response({'serializer':serializer,'errors':{'error':[f'Invalid old password for user : {self.request.user.username}']}})
+                return Response({'serializer':serializer,'errors':{'error':[_(f'Invalid old password for user : {self.request.user.username}')]}},status=status.HTTP_406_NOT_ACCEPTABLE)
 
             self.object.set_password(serializer.validated_data['new_password'])
             self.object.save()
             user = authenticate(username=self.object.username,password=self.object.password)
-            messages.info(request, 'Password changed successfully')
+            messages.info(request, _('Password changed successfully'))
             login(request,user=user)
             return redirect('core:index')
 
-        return Response({'serializer':serializer,'errors':serializer.errors})
+        return Response({'serializer':serializer,'errors':serializer.errors},status=status.HTTP_400_BAD_REQUEST)
 
 
 
@@ -133,7 +138,7 @@ class PasswordResetView(GenericAPIView):
         serializer.save()
         # Return the success message with OK HTTP status
         return Response(
-            {"success": "Password reset e-mail has been sent."},
+            {"success": _("Password reset e-mail has been sent.")},
             status=status.HTTP_200_OK
         )
 
@@ -156,5 +161,5 @@ class PasswordResetConfirmView(GenericAPIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(
-            {"detail": "Password has been reset with the new password."})
+            {"detail": _("Password has been reset with the new password.")})
 

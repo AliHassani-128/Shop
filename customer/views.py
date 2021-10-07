@@ -7,21 +7,24 @@ from django.views import generic
 
 from customer.forms import CustomerForm, AddressForm, EditAddressForm
 from customer.models import Customer, Address
-
+from django.utils.translation import gettext_lazy as _
 
 def update_profile(request,pk):
     try:
         customer = Customer.objects.get(pk=pk)
     except Customer.DoesNotExist:
-        messages.error(request, 'Just Customers can edit their profile')
+        messages.error(request, _('Just Customers can edit their profile'))
         return redirect('core:index')
 
     if request.method == 'POST':
         form = CustomerForm(request.POST,request.FILES,instance=customer)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Your profile edited successfully')
+            messages.success(request, _('Your profile edited successfully'))
             return redirect('core:index')
+        else:
+            return render(request, 'customer/update_profile.html', {'form': form},status=400)
+
 
     elif request.method == 'GET':
 
@@ -39,7 +42,7 @@ def set_address(request):
             instance.country = request.POST.get('country')
             instance.city = request.POST.get('city')
             instance.save()
-            messages.success(request, f'Address for user {request.user.username} saved')
+            messages.success(request, _(f'Address for user {request.user.username} saved'))
             return redirect('customer:show_address')
         else:
             print('Not valid')
@@ -80,7 +83,7 @@ def edit_address(request,pk):
 @login_required
 def delete_address(request,pk):
     Address.objects.get(id=pk).delete()
-    messages.success(request, 'Selected address deleted')
+    messages.success(request, _('Selected address has deleted'))
     return redirect('customer:show_address')
 
 

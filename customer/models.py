@@ -1,16 +1,6 @@
-from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from management.models import CustomUser
-
-class DiscountCode(models.Model):
-    code = models.CharField(max_length=50, unique=True)
-    valid_from = models.DateTimeField()
-    valid_to = models.DateTimeField()
-    discount = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
-    is_active = models.BooleanField()
-
-    def __str__(self):
-        return self.code
+from django.utils.translation import gettext_lazy as _
 
 
 
@@ -22,20 +12,20 @@ class Customer(CustomUser):
         super(Customer, self).save(*args, **kwargs)
 
     class Meta:
-        verbose_name = 'Customer'
+        verbose_name = _('Customer')
 
 
 
 
 class Address(models.Model):
     customer = models.ForeignKey(Customer,on_delete=models.CASCADE)
-    country = models.CharField(max_length=100)
-    city = models.CharField(max_length=100)
-    location = models.TextField()
+    country = models.CharField(_('country'),max_length=100)
+    city = models.CharField(_('city'),max_length=100)
+    location = models.TextField(_('location'))
 
     class Meta:
-        verbose_name = 'Address'
-        verbose_name_plural = 'Addresses'
+        verbose_name = _('Address')
+        verbose_name_plural = _('Addresses')
 
     def __str__(self):
         return f'{self.country} - {self.city} - {self.location}'
