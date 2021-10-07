@@ -1,36 +1,47 @@
-<nav class="navbar navbar-expand-md navbar-dark bg-dark mb-5" style="height: 100px">
-
-    <a class="navbar-brand" href="{% url 'core:index' %}">
-        <img src="{{ settings.BASE_DIR }}/media/myshop.png" height="80" alt="shop logo">
-    </a>
+{% load i18n %}
 
 
-    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#basicNav"
-            aria-controls="basicNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
+<div class="container-fluid mb-5 bg-dark bp3-fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+        <a class="navbar-brand" href="{% url 'core:index' %}">
+            <img src="{{ settings.BASE_DIR }}/media/myshop.png" height="80" alt="shop logo">
+        </a>
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01"
+                aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
 
 
-    <div class="collapse navbar-collapse" id="basicNav">
-        <div class="col bg-dark">
             <ul class="navbar-nav ml-auto justify-content-end">
-                <li class="nav-item">
-                    <button onclick="$('#mySidebar').css('display', 'block')" type="button"
-                            class="btn btn-outline-light" style="min-width: 14px;"
-                            id="side_nav">
-                        <i class="fa fa-bars fa-lg"></i>
-                    </button>
+                <li class="nav-item dropdown">
 
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Languages
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        {% get_current_language as LANGUAGE_CODE %}
+                        {% get_available_languages as LANGUAGE %}
+                        {% get_language_info_list for LANGUAGES as languages %}
+                        {% for language in languages %}
+                            <a class="dropdown-item" href="">{{ language.name_local }}</a>
+                        {% endfor %}
+
+
+                    </div>
                 </li>
 
-
                 <li class="nav-item">
-                    <a href="{% url 'order:order_list' %}" class="nav-link navbar-link-2 waves-effect ml-auto mr-auto">
+                    <a href="{% url 'order:order_list' %}"
+                       class="nav-link navbar-link-2 waves-effect ml-auto mr-auto mb-auto mt-auto">
 
                         <i class="fa fa-shopping-cart pl-0" style="font-size: 30px;color:#03b7ae">
                         </i>
                         {% if request.session.cart %}
-                            <span class='badge badge-info' id='product-count'>{{ request.session.cart|length }}</span>
+                            <span class='badge badge-info'
+                                  id='product-count'>{{ request.session.cart|length }}</span>
                         {% else %}
                             <span class='badge badge-info' id='product-count'>0</span>
                         {% endif %}
@@ -42,33 +53,33 @@
 
 
                 {% if not user.is_authenticated %}
-                    <li class="nav-item">
+                    <li class="nav-item ml-auto mr-auto mb-auto mt-auto">
                         <a href="{% url 'login_customer' %}" type="button"
                            class="btn btn-outline-success btn-md btn-rounded btn-navbar waves-effect waves-light">
                             <i class="fa fa-user"></i> Login
                         </a>
                     </li>
-                    <li class="nav-item pl-2 mb-2 mb-md-0">
+                    <li class="nav-item pl-2 ml-auto mr-auto mb-auto mt-auto">
                         <a href="{% url 'register_customer' %}" type="button"
                            class="btn btn-outline-info btn-md btn-rounded btn-navbar waves-effect waves-light"><i
                                 class="fa fa-sign-in"></i> Sign
                             up</a>
                     </li>
                 {% else %}
-                    <li class="nav-item">
+                    <li class="nav-item ml-auto mr-auto mb-auto mt-auto">
                         <a href="{% url 'logout_customer' %}" type="button"
                            class="btn btn-outline-danger btn-md btn-rounded btn-navbar waves-effect waves-light">
                             <i class="fa fa-sign-out"></i> Logout
                         </a>
                     </li>
-                    <li class="nav-item pl-2 mb-2 mb-md-0">
+                    <li class="nav-item pl-2 ml-auto mr-auto mb-auto mt-auto">
                         <a href="{% url 'change_password' %}" type="button"
                            class="btn btn-outline-info btn-md btn-rounded btn-navbar waves-effect waves-light"><i
                                 class="fa fa-key"></i> Password
                             change</a>
                     </li>
 
-                    <li class="nav-item pl-2 mb-2 mb-md-0">
+                    <li class="nav-item pl-2 ml-auto mr-auto mb-auto mt-auto">
                         <button type="button" class="btn btn-outline-warning" data-toggle="modal"
                                 data-target="#myProfile"><i class="fa fa-user"></i>
                             Profile
@@ -78,25 +89,22 @@
 
                     </li>
 
-                    <li class="nav-item pl-2 mb-2 mb-md-0">
-                        <form id="search" class="form-inline mt-2 mt-md-0" action="{% url 'core:search' %}"
-                              method="post">
-                            {% csrf_token %}
-                            <input name="search" class="form-control mr-sm-2" type="text" placeholder="Search">
-                            {#                            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>#}
-                            <input type="submit" value="Search" class="btn btn-outline-success my-2 my-sm-0">
-                        </form>
-                    </li>
+
 
                 {% endif %}
+                <li class="nav-item pl-2 ml-auto mr-auto mb-auto mt-auto">
+                    <form id="search" class="form-inline mt-2 mt-md-0" action="{% url 'core:search' %}"
+                          method="post">
+                        {% csrf_token %}
+                        <input name="search" class="form-control mr-sm-2" type="text" placeholder="Search">
+                        <input type="submit" value="Search" class="btn btn-outline-success my-2 my-sm-0">
+                    </form>
+                </li>
             </ul>
+
         </div>
-    </div>
-
-</nav>
-{% include 'core/category_sidenav.html' %}
-
-
+    </nav>
+</div>
 
 
 

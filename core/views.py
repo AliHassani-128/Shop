@@ -1,6 +1,4 @@
 from django.contrib import messages
-from django.contrib.auth.models import AnonymousUser
-from django.core.paginator import PageNotAnInteger, EmptyPage, Paginator
 from django.db.models import Q
 from django.shortcuts import render, redirect
 
@@ -8,10 +6,9 @@ from django.shortcuts import render, redirect
 from customer.models import Customer
 from order.models import Order
 from product.models import Product, Category
-
+from django.utils.translation import gettext_lazy as _
 
 def index(request):
-
     categories = Category.objects.all()
     last_products = Product.objects.all().order_by('-id')[:3]
     cart = request.session.get('cart')
@@ -35,6 +32,6 @@ def search(request):
         item = request.POST.get('search')
         products = Product.objects.filter(Q(name__icontains=item) | Q(category__name__icontains=item))
         if len(products) == 0:
-            messages.error(request, 'Product with this name Not Found!!')
+            messages.error(request, _('Product with this name Not Found!!'))
             return redirect('core:index')
-        return render(request, 'product/all_products.html', {'products': products})
+        return render(request, 'product/all_products.html', {'products': products},status=200)
