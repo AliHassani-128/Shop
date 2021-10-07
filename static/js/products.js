@@ -13,7 +13,6 @@ function load_page(url) {
                 console.log(response)
                 $('#row').html('');
                 for (var product of response.results) {
-                    console.log(response.results)
                     var container = $('<div class="col-sm-12 col-md-6 col-lg-3 ml-1 mr-1 mt-4"></div>').appendTo('#row');
                     var card = $('<div class="card shadow" style="border-radius: 20px"></div>').appendTo(container);
                     var col = $('<div class="col-auto"></div>').appendTo(card);
