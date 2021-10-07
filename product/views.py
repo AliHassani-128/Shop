@@ -14,6 +14,7 @@ def show_products(request, id=None):
         products_list = Product.objects.filter(category_id=id)
     else:
         products_list = Product.objects.all().order_by('-id')
+
     paginator = Paginator(products_list, 5)
     categories = Category.objects.all()
     last_products = Product.objects.all().order_by('-id')[:3]
@@ -36,10 +37,8 @@ def show_products(request, id=None):
         products = paginator.page(1)
     except EmptyPage:
         products = paginator.page(paginator.num_pages)
-    return render(request,'product/all_products.html',{'products':products,'categories':categories,'last_products':last_products})
-
-
-
+    return render(request, 'product/all_products.html',
+                  {'products': products, 'categories': categories, 'last_products': last_products})
 
 
 class ProductDetail(generic.DetailView):

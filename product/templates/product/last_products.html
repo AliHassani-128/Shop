@@ -1,15 +1,112 @@
+<style>
+    .navbar-nav li:hover > ul.dropdown-menu {
+        display: block;
+    }
+
+    .dropdown-submenu {
+        position: relative;
+    }
+
+    .dropdown-submenu > .dropdown-menu {
+        top: 0;
+        left: 100%;
+        margin-top: -6px;
+    }
+
+    /* rotate caret on hover */
+    .dropdown-menu > li > a:hover:after {
+        text-decoration: underline;
+        transform: rotate(-90deg);
+    }
 
 
-<div class="container-fluid">
-    <div class="row justify-content-center">
+</style>
 
-        <div class="col-lg-8">
+
+<div class="container-fluid mt-5">
+    <div class="row justify-content-around">
+        <div class="card bg-transparent mb-3">
+            <ul class="navbar-nav">
+                <div class="card-header bg-dark text-white text-uppercase"><i class="fa fa-list"></i> Categories</div>
+                {% for category in categories %}
+                    {% if not category.parent %}
+                        <li class="nav-item dropdown  btn btn-dark justify-content-center">
+                            <a class="nav-link dropdown-toggle text-white"
+                               href="{% url 'product:show_products' category.id %}"> {{ category.name }} </a>
+                            {% if category.children %}
+
+
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                    {% for child in category.children.all %}
+                                        {% if child.children %}
+                                            <li class="dropdown-submenu"><a
+                                                    class="text-dark dropdown-item dropdown-toggle"
+                                                    href="{% url 'product:show_products' child.id %}">{{ child.name }}</a>
+                                                {% if child.children %}
+                                                    <ul class="dropdown-menu">
+                                                        {% for child2 in child.children.all %}
+                                                            {% if child2.children %}
+                                                                <li class="dropdown-submenu"><a
+                                                                        class="dropdown-item text-dark"
+                                                                        href="{% url 'product:show_products' child2.id %}">{{ child2.name }}</a>
+                                                                    {% if child2.children %}
+                                                                        {% for child3 in child2.children.all %}
+                                                                            <ul class="dropdown-menu">
+                                                                                <li>
+                                                                                    <a class="dropdown-item text-dark"
+                                                                                       href="{% url 'product:show_products' child3.id %}">{{ child3.name }}</a>
+                                                                                </li>
+
+                                                                            </ul>
+
+                                                                        {% endfor %}
+
+
+                                                                    {% endif %}
+
+                                                                </li>
+                                                            {% else %}
+                                                                <li>
+                                                                    <a
+                                                                            class="dropdown-item text-dark"
+                                                                            href="{% url 'product:show_products' child2.id %}">{{ child2.name }}</a>
+                                                                </li>
+
+                                                            {% endif %}
+
+                                                        {% endfor %}
+                                                    </ul>
+                                                {% endif %}
+                                            </li>
+
+                                        {% else %}
+                                            <li class="dropdown-item">
+                                                <a class=" text-dark"
+                                                   href="{% url 'product:show_products' child.id %}">{{ child.name }}</a>
+                                            </li>
+
+
+                                        {% endif %}
+
+                                    {% endfor %}
+                                </ul>
+
+                            {% else %}
+                            {% endif %}
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+
+        </div>
+
+        <div class="col-lg-6 col-sm-12 rounded">
 
 
             <div class="row wow fadeIn" data-wow-delay="0.4s">
                 <div class="col-lg-12">
 
-                    <div id="carousel-example-1z" class="carousel slide carousel-fade" data-ride="carousel">
+                    <div id="carousel-example-1z" class="carousel slide carousel-fade rounded" data-ride="carousel">
                         <ol class="carousel-indicators">
                             <li data-target="#carousel-example-1z" data-slide-to="0" class="active"></li>
                             <li data-target="#carousel-example-1z" data-slide-to="1"></li>
@@ -24,8 +121,9 @@
 
                                 <div class="carousel-item{% if forloop.first %} active{% endif %}">
 
-                                    <img src="{{ product.image.url }}"
-                                         {% if image.name %}alt="{{ image.name }}"{% endif %} style="width: 100%">
+                                    <img class="rounded d-block w-100" src="{{ product.image.url }}"
+                                         {% if image.name %}alt="{{ image.name }}"{% endif %}
+                                         style="width: 100%;max-height: 320px">
 
 
                                     <div class="carousel-caption text-center text-dark">

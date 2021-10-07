@@ -7,7 +7,7 @@ from product.models import Product
 
 
 class ProductsPagination(PageNumberPagination):
-    page_size = 3
+    page_size = 6
     page_size_query_param = 'page_size'
     max_page_size = 1000
 
@@ -23,6 +23,6 @@ class ProductsPagination(PageNumberPagination):
 
 
 class ProductView(generics.ListAPIView):
-    queryset = Product.objects.all()
+    queryset = Product.objects.all().order_by('-id')
     serializer_class = ProductSerializer
     pagination_class = ProductsPagination
