@@ -1,5 +1,4 @@
 import json
-
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
@@ -22,6 +21,11 @@ def order_total_price(orders):
 
 
 def delete_from_cart(request):
+    """
+    request with ajax and delete an quantity of order and
+    if order.quantity is 0 this view delete order completely
+    """
+
     product_id = request.GET.get('product')
     try:
         customer = Customer.objects.get(id=request.user.id)
@@ -32,31 +36,38 @@ def delete_from_cart(request):
 
     if cart:
         if product_id in cart.keys():
-            if product.inventory >= 1:
-                order = Order.objects.get(product=product, customer=customer, ordered=False)
-                if order.quantity == 1:
-                    id = order.id
-                    order.delete()
-                    del cart[product_id]
-                    request.session['cart'] = cart
-                    total_price = order_total_price(Order.objects.filter(customer_id=request.user.id, ordered=False))
-                    return HttpResponse(
-                        json.dumps({'delete': True, 'id': id, 'total_price': total_price}))
-                else:
-                    order.quantity -= 1
-                    product.inventory += 1
-                    order.save()
-                    product.save()
-                    cart[product_id] = order.quantity
-                    total_price = order_total_price(Order.objects.filter(customer_id=request.user.id, ordered=False))
-                    return HttpResponse(
-                        json.dumps({'id': order.product.id, 'price': order.product_price, 'quantity': order.quantity,
-                                    'total_price': total_price}))
+            order = Order.objects.get(product=product, customer=customer, ordered=False)
+            if order.quantity == 1:
+                id = order.id
+                order.delete()
+                del cart[product_id]
+                request.session['cart'] = cart
+                total_price = order_total_price(Order.objects.filter(customer_id=request.user.id, ordered=False))
+                return HttpResponse(
+                    json.dumps({'delete': True, 'id': id, 'total_price': total_price}),status=200)
             else:
-                return HttpResponse(json.dumps({'error': ''}))
+                order.quantity -= 1
+                product.inventory += 1
+                order.save()
+                product.save()
+                cart[product_id] = order.quantity
+                total_price = order_total_price(Order.objects.filter(customer_id=request.user.id, ordered=False))
+                return HttpResponse(
+                    json.dumps({'id': order.product.id, 'price': order.product_price, 'quantity': order.quantity,
+                                'total_price': total_price}),status=200)
+    else:
+        return HttpResponse(json.dumps({'error':'no find any product to delete from cart'}),status=400)
+
+
 
 
 def add_to_cart(request):
+    """
+        request with ajax and add an quantity of order
+        if product.inventory is upper than 0
+
+    """
+
     product_id = request.GET.get('product')
     try:
         customer = Customer.objects.get(id=request.user.id)
@@ -76,12 +87,18 @@ def add_to_cart(request):
             total_price = order_total_price(Order.objects.filter(customer_id=request.user.id, ordered=False))
             return HttpResponse(
                 json.dumps({'id': order.product.id, 'price': order.product_price, 'quantity': order.quantity,
-                            'total_price': total_price}))
+                            'total_price': total_price}),status=200)
         else:
-            return HttpResponse(json.dumps({'error': 'This product does not have more inventory'}))
+            return HttpResponse(json.dumps({'error': 'This product does not have more inventory'}),status=400)
 
 
 def add_to_cart_home_page(request):
+    """
+        request with ajax and add a product to cart and save the cart
+        session and orders sessions .
+        this view return count of orders for show it in front and in the home page.
+    """
+
     product_id = request.GET.get('product')
     try:
         customer = Customer.objects.get(id=request.user.id)
@@ -105,7 +122,10 @@ def add_to_cart_home_page(request):
 
                     order = find_order
                 else:
-                    order = Order.objects.get(customer=customer, ordered=False, product=product)
+                    try:
+                        order = Order.objects.get(customer=customer, ordered=False, product=product)
+                    except Order.DoesNotExist:
+                        order = Order.objects.create(customer=customer, product=product)
                 order.quantity += 1
                 product.inventory -= 1
                 order.save()
@@ -115,7 +135,6 @@ def add_to_cart_home_page(request):
                     products = len(Order.objects.filter(customer=customer, ordered=False))
                 else:
                     products = len(request.session['cart'])
-
 
                 return HttpResponse(
                     json.dumps({'products': products}),
@@ -153,28 +172,41 @@ def add_to_cart_home_page(request):
             products = len(Order.objects.filter(customer=customer, ordered=False))
         return HttpResponse(
             json.dumps({'products': products}),
-            content_type="application/json")
+            content_type="application/json", status=200)
 
 
 def order_list(request):
+    """
+        show all orders of customer.
+        if session['orders'] is not empty that means customer before login
+        was added some orders to his/her cart and in this view we can sync
+        and merge anonymous user and login user cart.
+    """
+
     try:
         customer = Customer.objects.get(id=request.user.id)
     except Customer.DoesNotExist:
         pass
     else:
         if request.session.get('orders'):
-            customer_orders_products = [order.product.id for order in Order.objects.filter(customer_id=request.user.id, ordered=False)]
-            for order_id in request.session.get('orders'):
+            customer_orders_products = [order.product.id for order in
+                                        Order.objects.filter(customer_id=request.user.id, ordered=False)]
+            for order_id in request.session.get('orders').values():
                 order = Order.objects.get(id=order_id)
                 if order.product.id in customer_orders_products:
-                    find_order = Order.objects.get(product_id=order.product.id,customer=customer,ordered=False)
+                    find_order = Order.objects.get(product_id=order.product.id, customer=customer, ordered=False)
                     find_order.quantity += order.quantity
+                    find_order.save()
                     order.delete()
                     continue
-                order.customer = customer
-                order.save()
+                else:
+                    order.customer = customer
+                    order.save()
             request.session['orders'] = {}
+            request.session['cart'] = {}
     orders = Order.objects.filter(customer_id=request.user.id, ordered=False)
+    if len(orders) == 0:
+        request.session['cart'] = {}
     total_price = order_total_price(orders)
     if not request.session.get('cart'):
         cart = dict()
@@ -187,11 +219,17 @@ def order_list(request):
                 for order in Order.objects.filter(customer=customer, ordered=False):
                     cart[str(order.product.id)] = order.quantity
                 request.session['cart'] = cart
-    return render(request, 'order/all_orders.html', {'orders': orders, 'total_price': total_price})
+    return render(request, 'order/all_orders.html', {'orders': orders, 'total_price': total_price},status=200)
 
 
 @login_required
 def final_order(request):
+    """
+        In this view we delete cart of customer and set final order.
+        if customer has discount code in this view we send it's serializer
+        to client .
+    """
+
     serializer = DiscountCodeSerializer()
     customer = Customer.objects.get(id=request.user.id)
     if not customer.order_history.filter(ordered=False).exists():
@@ -211,15 +249,22 @@ def final_order(request):
             return redirect('core:index')
     else:
         order_history = OrderHistory.objects.get(customer=customer, ordered=False)
+        if Order.objects.filter(customer=customer, ordered=False).exists():
+            orders = Order.objects.filter(customer=customer, ordered=False)
+            order_history.orders.add(*orders)
+            order_history.total_price = sum([order.product_price for order in orders])
+            order_history.save()
+            for order in orders:
+                order.ordered = True
+                order.save()
         request.session['order_history'] = order_history.id
     if Address.objects.filter(customer_id=request.user.id).exists():
         address = Address.objects.filter(customer_id=request.user.id)
     else:
         messages.info(request, 'You should add an address in your profile first')
         return redirect('customer:set_address')
-
     return render(request, 'order/final_order.html',
-                  {'order_history': order_history, 'address': address, 'serializer': serializer})
+                  {'order_history': order_history, 'address': address, 'serializer': serializer},status=200)
 
 
 @login_required
@@ -236,17 +281,24 @@ def final_pay(request, id):
     order_history.address = Address.objects.get(id=address_id)
     order_history.ordered = True
     request.session['order_history'] = {}
+    request.session['cart'] = {}
+    request.session['orders'] = {}
     order_history.save()
-    messages.info(request, 'You will redirect to paying page')
+    messages.success(request, 'You will redirect to payment gateway')
     return redirect('core:index')
 
 
 def delete_order(request, id):
+    """
+        In this view we delete selected order from final order template and it's
+        response is a json that has id of order for delete row of order in client
+        side and total price of all customer orders after delete this order
+
+    """
     order = Order.objects.get(id=id)
-    id = order.id
-    order.delete()
     order_history = OrderHistory.objects.get(customer_id=request.user.id, ordered=False)
     order_history.orders.remove(order)
+    order.delete()
     order_history.total_price = order_total_price(order_history.orders.all())
     if order_history.orders.count() == 0:
         order_history.delete()
@@ -254,7 +306,7 @@ def delete_order(request, id):
         total_price = 0
     else:
         total_price = order_history.total_price
-    return HttpResponse(json.dumps({'id': id, 'total_price': total_price}))
+    return HttpResponse(json.dumps({'id': id, 'total_price': total_price}),status=200)
 
 
 class All_Orders_History(generic.ListView):

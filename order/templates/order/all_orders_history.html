@@ -13,6 +13,7 @@
                     <th scope="col" class="text-center"> Date of Order</th>
                     <th scope="col" class="text-center"> Status</th>
                     <th scope="col" class="text-center"> Address</th>
+                    <th scope="col" class="text-center"> Total Price</th>
                     <th scope="col" class="text-center"></th>
                 </tr>
                 </thead>
@@ -39,6 +40,10 @@
 
                         <td class="text-center">
                             {{ orders.address.country }} ,{{ orders.address.city }}
+                        </td>
+
+                        <td class="text-center">
+                            {{ orders.total_price }} $
                         </td>
 
                     </tr>

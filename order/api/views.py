@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 from customer.models import Customer
 from order.api.serializers import DiscountCodeSerializer
 from order.models import OrderHistory
-from customer.models import DiscountCode
+from management.models import DiscountCode
 
 class DiscountCodeView(APIView):
     model = DiscountCode
@@ -29,7 +29,6 @@ class DiscountCodeView(APIView):
             if customer.discount_code.code == serializer.validated_data['code']:
                 order.total_price -= (order.total_price * customer.discount_code.discount) /100
                 customer.discount_code = None
-                # order.discount_code = None
                 order.save()
                 customer.save()
             return JsonResponse({'total_price':order.total_price})

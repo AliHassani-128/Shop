@@ -8,60 +8,63 @@
 
     {% if orders %}
         <div class="row justify-content-center">
-            <table class="table">
-                <thead>
-                <tr>
-                    <th scope="col" class="text-center"> Name of product</th>
-                    <th scope="col" class="text-center"> Quantity</th>
-                    <th scope="col" class="text-center"> Price</th>
-                    <th scope="col" class="text-center"> Image</th>
-                    <th scope="col" class="text-center"></th>
-                </tr>
-                </thead>
-                <tbody id="table_body">
-                {% for order in orders %}
-                    <tr id="order{{ order.id }}">
-                        <td class="text-center">{{ order.product.name }}</td>
-                        <th scope="col" class="text-center"
-                            id="quantity{{ order.product.id }}"> {{ order.quantity }}</th>
-                        <td class="text-center" id="price{{ order.product.id }}">{{ order.product_price }} $</td>
-                        <td class="text-center"><img src="{{ order.product.image.url }}"
-                                                     alt="{{ product.name }}" style="width: 50px;height: 50px"></td>
-                        <td class="text-center">
-                            <div class="row">
+        <div class="col-8">
+        <table class="table table-bordered" id="order_table">
+            <thead>
+            <tr>
+                <th scope="col" class="text-center"> Name of product</th>
+                <th scope="col" class="text-center"> Quantity</th>
+                <th scope="col" class="text-center"> Price</th>
+                <th scope="col" class="text-center"> Image</th>
+                <th scope="col" class="text-center"></th>
+            </tr>
+            </thead>
+            <tbody id="table_body">
+            {% for order in orders %}
+                <tr id="order{{ order.id }}">
+                    <td class="text-center">{{ order.product.name }}</td>
+                    <th scope="col" class="text-center"
+                        id="quantity{{ order.product.id }}"> {{ order.quantity }}</th>
+                    <td class="text-center" id="price{{ order.product.id }}">{{ order.product_price }} $</td>
+                    <td class="text-center"><img src="{{ order.product.image.url }}"
+                                                 alt="{{ product.name }}" style="width: 50px;height: 50px"></td>
+                    <td class="text-center">
+                        <div class="row justify-content-center">
 
-                                <div class="col-auto">
-                                    <form class="edit_product" action="{% url 'order:delete_from_cart' %}" method="get">
-                                        <input name="product" type="text" style="display: none"
-                                               value="{{ order.product.id }}">
-                                        <input class="btn btn-danger font-weight-bold" type="submit" value="-">
-                                    </form>
-
-                                </div>
-                                <div class="col-auto">
-                                    <form class="edit_product" action="{% url 'order:add_to_cart' %}" method="get">
-                                        <input name="product" type="text" style="display: none"
-                                               value="{{ order.product.id }}">
-                                        <input class="btn btn-info font-weight-bold" type="submit" value="+">
-                                    </form>
-                                </div>
+                            <div class="col-auto">
+                                <form class="edit_product" action="{% url 'order:delete_from_cart' %}" method="get">
+                                    <input name="product" type="text" style="display: none"
+                                           value="{{ order.product.id }}">
+                                    <input class="btn btn-danger font-weight-bold" type="submit" value="-">
+                                </form>
 
                             </div>
+                            <div class="col-auto">
+                                <form class="edit_product" action="{% url 'order:add_to_cart' %}" method="get">
+                                    <input name="product" type="text" style="display: none"
+                                           value="{{ order.product.id }}">
+                                    <input class="btn btn-info font-weight-bold" type="submit" value="+">
+                                </form>
+                            </div>
+
+                        </div>
 
 
-                        </td>
+                    </td>
 
-                    </tr>
-
-
+                </tr>
 
 
-                {% endfor %}
-                </tbody>
 
-            </table>
 
+            {% endfor %}
+            </tbody>
+
+        </table>
         </div>
+        </div>
+
+
 
         <div class="row justify-content-center">
             <div class="col-auto">
