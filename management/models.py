@@ -2,16 +2,17 @@ from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import User, AbstractUser
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 # Create your models here.
 
 
 class DiscountCode(models.Model):
-    code = models.CharField(max_length=50, unique=True)
-    valid_from = models.DateTimeField()
-    valid_to = models.DateTimeField()
+    code = models.CharField(_('code'),max_length=50, unique=True)
+    valid_from = models.DateTimeField(_('valid from'))
+    valid_to = models.DateTimeField(_('valid to'))
     discount = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
-    is_active = models.BooleanField()
+    is_active = models.BooleanField(_('status'))
 
     def __str__(self):
         return self.code
@@ -48,9 +49,9 @@ class CustomUserManager(BaseUserManager):
 
 
 class CustomUser(AbstractUser):
-    phone = models.CharField('Phone number', max_length=20,unique=True)
-    image = models.FileField(upload_to='user_images',null=True,blank=True)
-    password_again = models.CharField(max_length=128)
+    phone = models.CharField(_('Phone number'), max_length=20,unique=True)
+    image = models.FileField(_('image'),upload_to='user_images',null=True,blank=True)
+    password_again = models.CharField(_('password again'),max_length=128)
     discount_code = models.ForeignKey(DiscountCode, on_delete=models.CASCADE, null=True, blank=True)
 
     USERNAME_FIELD = 'username'
