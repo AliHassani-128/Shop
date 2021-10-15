@@ -6,7 +6,8 @@
 {% block content %}
     {% if order_history %}
         <div class="row justify-content-center">
-            <table class="table">
+            <div class="col-9">
+            <table class="table table-bordered">
                 <thead>
                 <tr>
                     <th scope="col" class="text-center"> Products</th>
@@ -14,7 +15,7 @@
                     <th scope="col" class="text-center"> Status</th>
                     <th scope="col" class="text-center"> Address</th>
                     <th scope="col" class="text-center"> Total Price</th>
-                    <th scope="col" class="text-center"></th>
+
                 </tr>
                 </thead>
                 <tbody>
@@ -24,7 +25,7 @@
                             <ul>
                                 {% for order in orders.orders.all %}
                                     <li>
-                                        {{ order.product.name }}
+                                        {{ order.product.name }} --> ({{ order.quantity }})
                                     </li>
                                 {% endfor %}
                             </ul>
@@ -51,6 +52,7 @@
                 </tbody>
 
             </table>
+            </div>
         </div>
     {% endif %}
 {% endblock %}

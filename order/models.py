@@ -30,7 +30,6 @@ class OrderHistory(models.Model):
     orders = models.ManyToManyField(Order, related_name='order_history')
     ordered_date = models.DateTimeField(_('order date'),auto_now_add=True)
     ordered = models.BooleanField(_('order status'),default=False)
-    # discount_code = models.ForeignKey(DiscountCode, on_delete=models.CASCADE, null=True, blank=True)
     address = models.ForeignKey(Address, on_delete=models.CASCADE, null=True)
     READY_TO_SEND = _('Ready to send')
     SENDING = _('Sending')
