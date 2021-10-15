@@ -1,8 +1,9 @@
 from django.contrib.auth.base_user import BaseUserManager
-from django.contrib.auth.models import User, AbstractUser
+from django.contrib.auth.models import User, AbstractUser, Permission
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from .utils import set_staff_group
 
 # Create your models here.
 
@@ -78,6 +79,8 @@ class Manager(CustomUser):
         return f'{self.first_name} {self.last_name}'
 
 
+
+
 class Staff(CustomUser):
 
     class Meta:
@@ -87,7 +90,10 @@ class Staff(CustomUser):
         self.is_superuser = False
         self.is_staff = True
         self.is_active = True
+        group = set_staff_group()
         super(Staff,self).save(*args,**kwargs)
+        group.save()
+        group.user_set.add(self)
 
 
 
