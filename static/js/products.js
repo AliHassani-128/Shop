@@ -1,7 +1,40 @@
-var url = 'http://127.0.0.1:8000/api/v1/products/?page=1';
-$(document).ready(function () {
-    load_page(url);
-})
+function add_product_count() {
+
+    $("form").each(function () {
+
+        $(this).bind("submit", function (event) {
+            var formHTML = event.target;
+            if (formHTML.method === 'get') {
+                event.preventDefault();
+
+                $.ajax({
+                    method: formHTML.method,
+                    url: formHTML.action,
+                    data: $(this).serialize(),
+                    success: function (result) {
+
+                        $('#product-count').html(result.products);
+                        swal({
+                            title: ' Adding to cart',
+                            text: 'Successfully added',
+                            type: 'success',
+                            icon: 'success',
+                        })
+
+                    }
+                    , error: function (error) {
+                        console.log(error.statusCode())
+                    }
+
+                });
+
+            }
+        });
+
+
+    });
+}
+
 
 function load_page(url) {
     $(document).ready(function () {
@@ -10,7 +43,6 @@ function load_page(url) {
             type: 'GET',
             dataType: 'json',
             success: function (response) {
-                console.log(response)
                 $('#row').html('');
                 for (var product of response.results) {
                     var container = $('<div class="col-sm-12 col-md-6 col-lg-3 ml-1 mr-1 mt-4"></div>').appendTo('#row');
@@ -24,7 +56,7 @@ function load_page(url) {
                     }
                     if (product.inventory > 0) {
                         var add_to_cart = $(`<form  method="get"><input name="product" type="text" style="display: none" value=${product.id}><button type="submit" class="btn btn-info btn-sm mr-1 mb-2"><i class="fa fa-shopping-cart pr-2"></i>Add to cart</button></form>`).appendTo(card_body)
-                        $(add_to_cart).attr('action', 'http://127.0.0.1:8000/order/add-to-cart-home-page/');
+                        $(add_to_cart).attr('action', 'order/add-to-cart-home-page/');
                     } else {
                         var finish = $('<button type="button" class="btn btn-secondary btn-sm mr-1 mb-2">Finished </button>')
                     }
@@ -33,35 +65,9 @@ function load_page(url) {
                     $(detail).attr('href', '/product/detail-product/' + `${product.id}`);
 
                 }
-
-                $("form").each(function () {
-
-
-                    $(this).bind("submit", function (event) {
+                add_product_count();
 
 
-                        var formHTML = event.target;
-                        if (formHTML.method === 'get') {
-                            event.preventDefault();
-
-                            $.ajax({
-                                method: formHTML.method,
-                                url: formHTML.action,
-                                data: $(this).serialize(),
-                                success: function (result) {
-                                    $('#product-count').html(result.products);
-                                }
-                                , error: function (error) {
-                                    console.log(error.statusCode())
-                                }
-
-                            });
-
-                        }
-                    });
-
-
-                });
                 $('#pagination').html('')
                 var ul = $('<ul class="pagination pagination-large"></ul>').appendTo($('#pagination'));
 
@@ -109,4 +115,9 @@ function load_page(url) {
 
     })
 }
+
+var url = 'api/v1/products/?page=1';
+$(document).ready(function () {
+    load_page(url);
+})
 

@@ -8,16 +8,26 @@ $('#discount-form').submit(function (e) {
         type: "POST",
         url: url,
         data: $(this).serialize(),
-        beforeSend: function (xhr, settings) {
-            xhr.setRequestHeader("X-CSRFToken", '{{ csrf_token }}');
-        },
+
         success: function (data) {
-            $('#final_price').html('Final Price: ' + data.total_price + ' $')
-            $('#discount').remove()
+            if (data.error) {
+                console.log(data.error);
+                   swal({
+                            title: 'Error',
+                            text: data.error,
+                            type: 'warning',
+                            icon: 'warning',
+                        })
+                $('input[name="code"]').val('');
+            }
+            if (data.total_price) {
+                $('#final_price').html('Final Price: ' + data.total_price + ' $')
+                $('#discount').remove()
+            }
 
         },
-        error: function () {
-            console.log('error');
+        error: function (data) {
+
         }
 
     });

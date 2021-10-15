@@ -5,7 +5,7 @@ $("form").each(function () {
 
 
         var formHTML = event.target;
-        if(formHTML.method === 'get') {
+        if (formHTML.method === 'get') {
             event.preventDefault();
 
 
@@ -18,6 +18,7 @@ $("form").each(function () {
                 success: function (result) {
 
                     $('#product-count').html(result.products);
+
                 }
                 , error: function (error) {
                     console.log(error.statusCode())
@@ -27,8 +28,6 @@ $("form").each(function () {
 
         }
     });
-
-
 
 
 });
