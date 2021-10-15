@@ -1,11 +1,11 @@
 
 # Shop with Python/Django
-![alt text](https://github.com/AliHassani-128/Shop/media/shop_test_img.png?raw=true)
+![alt text](https://github.com/AliHassani-128/Shop/blob/main/media/shop_test_img.png?raw=true)
 
 ## Short description:
 This is an E-Commerce website that is made with python and it's popular framework Django.
 
-![alt text](https://github.com/AliHassani-128/Shop/media/shop_test_image.png?raw=true)
+![alt text](https://github.com/AliHassani-128/Shop/blob/main/media/shop_test_image.png?raw=true)
 ## How to run this project
 
 This project has been dockerized and you should have docker in your system to run it easily.
