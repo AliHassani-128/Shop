@@ -41,11 +41,11 @@ class CustomerCreate(generics.CreateAPIView):
     def post(self, request):
         serializer = CusotmerSerializer(data=request.data)
         if not serializer.is_valid():
-            # return Response(serializer.data,status=status.HTTP_400_BAD_REQUEST)
             return Response({'serializer': serializer, 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         else:
             serializer.save()
-            return redirect('core:index')
+            messages.success(request, _('Your account has been successfully registered. Please login to continue'))
+            return redirect('login_customer')
 
     def perform_create(self, serializer):
 

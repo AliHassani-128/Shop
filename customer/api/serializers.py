@@ -14,15 +14,18 @@ from django.utils.translation import gettext_lazy as _
 
 
 class CusotmerSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(write_only=True, required=True,  style={ 'placeholder': 'Username'})
-    password = serializers.CharField(write_only=True, required=True, validators=[validate_password], style={'input_type': 'password', 'placeholder': 'Password'})
-    password_again = serializers.CharField(write_only=True, required=True,style={'input_type': 'password', 'placeholder': 'Password Again'})
-    email = serializers.CharField(write_only=True,required=True,style={'placeholder': 'Email'})
+    username = serializers.CharField(write_only=True, required=True, style={'placeholder': 'Username'})
+    password = serializers.CharField(write_only=True, required=True, validators=[validate_password],
+                                     style={'input_type': 'password', 'placeholder': 'Password'})
+    password_again = serializers.CharField(write_only=True, required=True,
+                                           style={'input_type': 'password', 'placeholder': 'Password Again'})
+    email = serializers.CharField(write_only=True, required=True, style={'placeholder': 'Email'})
+
     class Meta:
         model = Customer
         depth = 1
-        fields = [_('username'),_('first_name'),_('last_name'),_('password'),_('password_again'),_('email'),_('phone'),_('image')]
-
+        fields = [_('username'), _('first_name'), _('last_name'), _('password'), _('password_again'), _('email'),
+                  _('phone'), _('image')]
 
     def create(self, validated_data):
         customer = Customer.objects.create(username=validated_data['username'],
@@ -33,14 +36,16 @@ class CusotmerSerializer(serializers.ModelSerializer):
                                            phone=validated_data['phone'],
                                            image=validated_data['image']
                                            )
+
         return customer
+
     def validate(self, attrs):
         if attrs['password'] != attrs['password_again']:
             raise serializers.ValidationError({"password": "Password fields didn't match."})
         if not attrs['email']:
-            raise serializers.ValidationError({'emil':'Email field is required'})
+            raise serializers.ValidationError({'emil': 'Email field is required'})
         if not attrs['phone']:
-            raise serializers.ValidationError({'phone':'Phone field is required'})
+            raise serializers.ValidationError({'phone': 'Phone field is required'})
         return attrs
 
     def validate_username(self, username):
@@ -49,13 +54,11 @@ class CusotmerSerializer(serializers.ModelSerializer):
         return username
 
 
-
-
 class LoginSerializer(serializers.Serializer):
-    username = serializers.CharField(max_length=128,  style={'placeholder': 'Username'})
+    username = serializers.CharField(max_length=128, style={'placeholder': 'Username'})
 
     password = serializers.CharField(write_only=True,
-                                         style={'input_type': 'password', 'placeholder': 'Password'})
+                                     style={'input_type': 'password', 'placeholder': 'Password'})
 
     def validate(self, attrs):
         if attrs['username'] and attrs['password']:
@@ -74,18 +77,19 @@ class LoginSerializer(serializers.Serializer):
 
         return {'user': user}
 
+
 class ChangePasswordSerializer(serializers.Serializer):
     model = Customer
     old_password = serializers.CharField(write_only=True, required=True,
                                          style={'placeholder': 'Old Password'})
     new_password = serializers.CharField(write_only=True, required=True,
-                                         style={'input_type': 'password', 'placeholder': 'New Password'},validators=[validators.MinLengthValidator(6),validators.RegexValidator(r'^[0-9a-zA-Z]*$', message='Only alphanumericcharacters are allowed.')])
-
-
+                                         style={'input_type': 'password', 'placeholder': 'New Password'},
+                                         validators=[validators.MinLengthValidator(6),
+                                                     validators.RegexValidator(r'^[0-9a-zA-Z]*$',
+                                                                               message='Only alphanumericcharacters are allowed.')])
 
 
 class PasswordResetSerializer(serializers.Serializer):
-
     """
     Serializer for requesting a password reset e-mail.
     """
