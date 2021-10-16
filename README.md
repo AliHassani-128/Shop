@@ -1,31 +1,41 @@
-
 # Shop with Python/Django
+
 ![alt text](https://github.com/AliHassani-128/Shop/blob/main/media/main_site.png?raw=true)
 
 ## Short description:
+
 This is an E-Commerce website that is made with python and it's popular framework Django.
 
 ![alt text](https://github.com/AliHassani-128/Shop/blob/main/media/shop_test_image.png?raw=true)
+
 ## How to run this project
 
 This project has been dockerized and you should have docker in your system to run it easily.
 
+1.cd to root directory
 
-1.cd to root directory 
+2.open terminal and type for windows:
 
-2.open terminal and type 
-for windows:
 ```http
   python -3 -m venv venv 
+```
+
+```http
   venv\Scripts\activate
 ```
+
 for Linux:
+
 ```http
   python3 -m venv venv
+```
+
+```http
   . venv/bin/activate
 ```
 
 then:
+
 ```http
   docker-compose up --build
 ```
@@ -44,13 +54,12 @@ Then copy your web container id from list and then in terminal type:
   docker exec -t -i your-container-id bash
 ```
 
-Now in your terminal you should have your container sh.
-type this command to make database tables:
-
+Now in your terminal you should have your container sh. type this command to make database tables:
 
 ```http
   python manage.py makemigrations
 ```
+
 then :
 
 ```http
@@ -62,17 +71,19 @@ after these you should make a super user for your django site:
 ```http
   python manage.py createsuperuser
 ```
+
 then you should fill information of the super user.
 
 4.Now you should open a terminal and type this command:
+
 ```http
   docker-compose up
 ```
-now your site should be run .
-open a browser and type http://127.0.0.1.8000/ to visit shop.
 
+now your site should be run . open a browser and type http://127.0.0.1.8000/ to visit shop.
 
 ## Demo of Project :
+
 If you want to see the demo of my project you can visit this site:
 
 ```http
