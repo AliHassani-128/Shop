@@ -61,6 +61,12 @@ now your site should be run .
 open a browser and type http://127.0.0.1.8000/ to visit shop.
 
 
+## Demo of Project :
+If you want to see the demo of my project you can visit this site:
+
+```http
+  https://ali128-shop.herokuapp.com/
+```
 
 
 
