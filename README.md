@@ -14,7 +14,9 @@ This project has been dockerized and you should have docker in your system to ru
 
 1.cd to root directory
 
-2.open terminal and type for windows:
+2.open terminal and type 
+
+for windows:
 
 ```http
   python -3 -m venv venv 
