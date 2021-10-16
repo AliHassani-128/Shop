@@ -11,10 +11,21 @@ This is an E-Commerce website that is made with python and it's popular framewor
 This project has been dockerized and you should have docker in your system to run it easily.
 
 
-1.cd to root directory
+1.cd to root directory 
 
-2.open terminal and type
+2.open terminal and type 
+for windows:
+```http
+  python -3 -m venv venv 
+  venv\Scripts\activate
+```
+for Linux:
+```http
+  python3 -m venv venv
+  . venv/bin/activate
+```
 
+then:
 ```http
   docker-compose up --build
 ```
@@ -27,7 +38,7 @@ When download has finished open another terminal and type:
   docker ps
 ```
 
-Then copy your web container id (web container) from list and then in terminal type:
+Then copy your web container id from list and then in terminal type:
 
 ```http
   docker exec -t -i your-container-id bash
