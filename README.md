@@ -16,7 +16,7 @@ This project has been dockerized and you should have docker in your system to ru
 2.open terminal and type
 
 ```http
-  docker-compose build
+  docker-compose up --build
 ```
 
 3.After this command you should wait to download images and requirements for project
@@ -27,7 +27,7 @@ When download has finished open another terminal and type:
   docker ps
 ```
 
-Then copy your web container id from list and then in terminal type:
+Then copy your web container id (web container) from list and then in terminal type:
 
 ```http
   docker exec -t -i your-container-id bash
@@ -38,12 +38,12 @@ type this command to make database tables:
 
 
 ```http
-  python manage.py migrate
+  python manage.py makemigrations
 ```
 then :
 
 ```http
-  python manage.py makemigrations
+  python manage.py migrate
 ```
 
 after these you should make a super user for your django site:
