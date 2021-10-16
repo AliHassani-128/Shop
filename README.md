@@ -1,6 +1,6 @@
 
 # Shop with Python/Django
-![alt text](https://github.com/AliHassani-128/Shop/blob/main/media/shop_test_img.png?raw=true)
+![alt text](https://github.com/AliHassani-128/Shop/blob/main/media/main_site.png?raw=true)
 
 ## Short description:
 This is an E-Commerce website that is made with python and it's popular framework Django.
