@@ -36,13 +36,15 @@ def delete_from_cart(request):
 
     if cart:
         if product_id in cart.keys():
-            order = Order.objects.get(product=product, customer=customer, ordered=False)
+            order = Order.objects.get(
+                product=product, customer=customer, ordered=False)
             if order.quantity == 1:
                 id = order.id
                 order.delete()
                 del cart[product_id]
                 request.session['cart'] = cart
-                total_price = order_total_price(Order.objects.filter(customer_id=request.user.id, ordered=False))
+                total_price = order_total_price(Order.objects.filter(
+                    customer_id=request.user.id, ordered=False))
                 return HttpResponse(
                     json.dumps({'delete': True, 'id': id, 'total_price': total_price}), status=200)
             else:
@@ -51,7 +53,8 @@ def delete_from_cart(request):
                 order.save()
                 product.save()
                 cart[product_id] = order.quantity
-                total_price = order_total_price(Order.objects.filter(customer_id=request.user.id, ordered=False))
+                total_price = order_total_price(Order.objects.filter(
+                    customer_id=request.user.id, ordered=False))
                 return HttpResponse(
                     json.dumps({'id': order.product.id, 'price': order.product_price, 'quantity': order.quantity,
                                 'total_price': total_price}), status=200)
@@ -76,13 +79,15 @@ def add_to_cart(request):
 
     if product_id in cart.keys():
         if product.inventory >= 1:
-            order = Order.objects.get(product=product, customer=customer, ordered=False)
+            order = Order.objects.get(
+                product=product, customer=customer, ordered=False)
             order.quantity += 1
             product.inventory -= 1
             order.save()
             product.save()
             cart[product_id] = order.quantity
-            total_price = order_total_price(Order.objects.filter(customer_id=request.user.id, ordered=False))
+            total_price = order_total_price(Order.objects.filter(
+                customer_id=request.user.id, ordered=False))
             return HttpResponse(
                 json.dumps({'id': order.product.id, 'price': order.product_price, 'quantity': order.quantity,
                             'total_price': total_price}), status=200)
@@ -121,16 +126,19 @@ def add_to_cart_home_page(request):
                     order = find_order
                 else:
                     try:
-                        order = Order.objects.get(customer=customer, ordered=False, product=product)
+                        order = Order.objects.get(
+                            customer=customer, ordered=False, product=product)
                     except Order.DoesNotExist:
-                        order = Order.objects.create(customer=customer, product=product)
+                        order = Order.objects.create(
+                            customer=customer, product=product)
                 order.quantity += 1
                 product.inventory -= 1
                 order.save()
                 product.save()
                 cart[product_id] = order.quantity
                 if customer:
-                    products = len(Order.objects.filter(customer=customer, ordered=False))
+                    products = len(Order.objects.filter(
+                        customer=customer, ordered=False))
                 else:
                     products = len(request.session['cart'])
 
@@ -141,7 +149,8 @@ def add_to_cart_home_page(request):
                 return HttpResponse(status=400)
         else:
             cart[product_id] = 1
-            new_order = Order.objects.create(product=product, quantity=1, customer=customer)
+            new_order = Order.objects.create(
+                product=product, quantity=1, customer=customer)
             request.session['cart'] = cart
             if not customer:
                 orders[new_order.id] = new_order.id
@@ -149,7 +158,8 @@ def add_to_cart_home_page(request):
                 products = len(request.session['cart'])
 
             else:
-                products = len(Order.objects.filter(customer=customer, ordered=False))
+                products = len(Order.objects.filter(
+                    customer=customer, ordered=False))
 
             return HttpResponse(
                 json.dumps({'products': products}),
@@ -159,7 +169,8 @@ def add_to_cart_home_page(request):
         cart = dict()
         cart[product_id] = 1
         request.session['cart'] = cart
-        new_order = Order.objects.create(product=product, quantity=1, customer=customer)
+        new_order = Order.objects.create(
+            product=product, quantity=1, customer=customer)
         if not customer:
             order = dict()
             order[new_order.id] = new_order.id
@@ -167,7 +178,8 @@ def add_to_cart_home_page(request):
             products = len(request.session['cart'])
 
         else:
-            products = len(Order.objects.filter(customer=customer, ordered=False))
+            products = len(Order.objects.filter(
+                customer=customer, ordered=False))
         return HttpResponse(
             json.dumps({'products': products}),
             content_type="application/json", status=200)
@@ -184,10 +196,17 @@ def order_list(request):
     try:
         customer = Customer.objects.get(id=request.user.id)
         if OrderHistory.objects.filter(customer=customer, ordered=False).exists():
-            order_history = OrderHistory.objects.get(customer=customer,ordered=False)
+            order_history = OrderHistory.objects.get(
+                customer=customer, ordered=False)
             request.session['order_history'] = order_history.id
-    except:
-        pass
+
+    except Customer.DoesNotExist:
+        if request.session.get('orders'):
+            orders = [Order.objects.get(
+                id=order_id) for order_id in request.session.get('orders').values()]
+            total_price = order_total_price(orders)
+            return render(request, 'order/all_orders.html', {'orders': orders, 'total_price': total_price}, status=200)
+        return render(request, 'order/all_orders.html')
     else:
         if request.session.get('orders'):
             customer_orders_products = [order.product.id for order in
@@ -198,7 +217,8 @@ def order_list(request):
                 except:
                     continue
                 if order.product.id in customer_orders_products:
-                    find_order = Order.objects.get(product_id=order.product.id, customer=customer, ordered=False)
+                    find_order = Order.objects.get(
+                        product_id=order.product.id, customer=customer, ordered=False)
                     find_order.quantity += order.quantity
                     find_order.save()
                     order.delete()
@@ -208,24 +228,24 @@ def order_list(request):
                     order.save()
             request.session['orders'] = {}
             request.session['cart'] = {}
-    orders = Order.objects.filter(customer_id=request.user.id, ordered=False)
-    if len(orders) == 0:
-        request.session['cart'] = {}
-    total_price = order_total_price(orders)
-    if not request.session.get('cart'):
-        cart = dict()
-        try:
-            customer = Customer.objects.get(id=request.user.id)
-        except Customer.DoesNotExist:
-            pass
-        else:
-            if Order.objects.filter(customer=customer, ordered=False).exists():
-                for order in Order.objects.filter(customer=customer, ordered=False):
-                    cart[str(order.product.id)] = order.quantity
-                request.session['cart'] = cart
 
+        orders = Order.objects.filter(ordered=False)
+        if len(orders) == 0:
+            request.session['cart'] = {}
+        total_price = order_total_price(orders)
+        if not request.session.get('cart'):
+            cart = dict()
+            try:
+                customer = Customer.objects.get(id=request.user.id)
+            except Customer.DoesNotExist:
+                pass
+            else:
+                if Order.objects.filter(customer=customer, ordered=False).exists():
+                    for order in Order.objects.filter(customer=customer, ordered=False):
+                        cart[str(order.product.id)] = order.quantity
+                    request.session['cart'] = cart
 
-    return render(request, 'order/all_orders.html', {'orders': orders, 'total_price': total_price}, status=200)
+        return render(request, 'order/all_orders.html', {'orders': orders, 'total_price': total_price}, status=200)
 
 
 @login_required
@@ -248,7 +268,8 @@ def final_order(request):
                 except:
                     continue
                 if order.product.id in customer_orders_products:
-                    find_order = Order.objects.get(product_id=order.product.id, customer=customer, ordered=False)
+                    find_order = Order.objects.get(
+                        product_id=order.product.id, customer=customer, ordered=False)
                     find_order.quantity += order.quantity
                     find_order.save()
                     order.delete()
@@ -262,7 +283,8 @@ def final_order(request):
             orders = Order.objects.filter(customer=customer, ordered=False)
             order_history = OrderHistory.objects.create(customer=customer)
             order_history.orders.add(*orders)
-            order_history.total_price = sum([order.product_price for order in orders])
+            order_history.total_price = sum(
+                [order.product_price for order in orders])
             order_history.save()
             for order in orders:
                 order.ordered = True
@@ -274,7 +296,8 @@ def final_order(request):
             return redirect('core:index')
     else:
         if request.session.get('orders'):
-            orders = OrderHistory.objects.get(customer=customer, ordered=False).orders.all()
+            orders = OrderHistory.objects.get(
+                customer=customer, ordered=False).orders.all()
             customer_orders_products = [order.product.id for order in orders]
             for order_id in request.session.get('orders').values():
                 try:
@@ -282,7 +305,8 @@ def final_order(request):
                 except:
                     continue
                 if order.product.id in customer_orders_products:
-                    find_order = Order.objects.get(product_id=order.product.id, customer=customer, ordered=False)
+                    find_order = Order.objects.get(
+                        product_id=order.product.id, customer=customer, ordered=False)
                     find_order.quantity += order.quantity
                     find_order.save()
                     order.delete()
@@ -292,11 +316,13 @@ def final_order(request):
                     order.save()
             request.session['orders'] = {}
             request.session['cart'] = {}
-        order_history = OrderHistory.objects.get(customer=customer, ordered=False)
+        order_history = OrderHistory.objects.get(
+            customer=customer, ordered=False)
         if Order.objects.filter(customer=customer, ordered=False).exists():
             orders = Order.objects.filter(customer=customer, ordered=False)
             order_history.orders.add(*orders)
-            order_history.total_price = sum([order.product_price for order in orders])
+            order_history.total_price = sum(
+                [order.product_price for order in orders])
             order_history.save()
             for order in orders:
                 order.ordered = True
@@ -305,7 +331,8 @@ def final_order(request):
     if Address.objects.filter(customer_id=request.user.id).exists():
         address = Address.objects.filter(customer_id=request.user.id)
     else:
-        messages.info(request, 'You should add an address in your profile first')
+        messages.info(
+            request, 'You should add an address in your profile first')
         return redirect('customer:set_address')
     return render(request, 'order/final_order.html',
                   {'order_history': order_history, 'address': address, 'serializer': serializer}, status=200)
@@ -340,7 +367,8 @@ def delete_order(request, id):
 
     """
     order = Order.objects.get(id=id)
-    order_history = OrderHistory.objects.get(customer_id=request.user.id, ordered=False)
+    order_history = OrderHistory.objects.get(
+        customer_id=request.user.id, ordered=False)
     order_history.orders.remove(order)
     order.delete()
     order_history.total_price = order_total_price(order_history.orders.all())
